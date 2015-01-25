@@ -70,6 +70,15 @@ void CTankDrive::SetupEncoders(UINT32 LeftA, UINT32 LeftB, UINT32 RightA, UINT32
 }
 
 
+void CTankDrive::ResetEncoders()
+{
+	if (m_pLEnc)
+		m_pLEnc->Reset();
+	if (m_pREnc)
+		m_pREnc->Reset();
+}
+
+
 void CTankDrive::SetupGears(int HighSolenoid, int LowSolenoid)
 {
   m_pHigh = new Solenoid(HighSolenoid);
@@ -124,12 +133,12 @@ void CTankDrive::GetPositions(INT32 *pLeft, INT32 *pRight)
 
 void CTankDrive::SetMotorSpeeds(double Left, double Right)
 {
-  m_pLRDrive->Set(Left, 1);
+  m_pLRDrive->Set(0.0 - Left, 1);
   if (m_pLFDrive)
-    m_pLFDrive->Set(Left, 1);
-  m_pRRDrive->Set(0.0 - Right, 1);
+    m_pLFDrive->Set(0.0 - Left, 1);
+  m_pRRDrive->Set(Right, 1);
   if (m_pRFDrive)
-    m_pRFDrive->Set(0.0 - Right, 1);
+    m_pRFDrive->Set(Right, 1);
 }
 
 

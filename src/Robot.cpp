@@ -29,7 +29,7 @@ public:
 			m_stickL(0),
 			m_stickR(1)
 	{
-		m_Drive.SetupEncoders(1,2,3,4);
+		m_Drive.SetupEncoders(0,1,2,3);
 		m_Drive.WatchdogOff();
 		//m_Drive.WatchdogOn(2.0);
 		m_table = NetworkTable::GetTable("datatable");
@@ -46,6 +46,8 @@ public:
 	// Autonomous Mode
 	void Autonomous(void)
 	{
+		double LSpeed, RSpeed;
+		float Yaw;
 		while(IsAutonomous() && IsEnabled())
 		{
 			// ALL OF THIS TO BE REPLACED WITH MORE
@@ -62,23 +64,36 @@ public:
 			}
 
 			// Turn 90 degrees and stop
-			if(m_navX->GetYaw() < 90)	{
-				m_Drive.SetMotorSpeeds(0.1,-0.1);
-			}
-			else {
-				m_Drive.GetPositions(&m_LeftPos, &m_RightPos);
-				if (m_LeftPos > 100)
-					m_Drive.SetMotorSpeeds(0.0, 0.0);
-				else
-					m_Drive.SetMotorSpeeds(0.75, 0.75);
+			//if(m_navX->GetYaw() < 90)	{
+			//	m_Drive.SetMotorSpeeds(0.1,-0.1);
+			//	m_Drive.ResetEncoders();
+			//}
+			//else {
+			Yaw = m_navX->GetYaw();
+			SmartDashboard::PutNumber( "Left", m_LeftPos);
+			SmartDashboard::PutNumber("IMU_Yaw", Yaw);
+			m_Drive.GetPositions(&m_LeftPos, &m_RightPos);
+			if (m_LeftPos + m_RightPos >= 11000)
+				m_Drive.SetMotorSpeeds(0.0, 0.0);
+			else
+			{
+				LSpeed = RSpeed = 0.70;
+				if (Yaw > 2.0)
+					LSpeed = LSpeed - 0.10;
+
+				m_Drive.SetMotorSpeeds(LSpeed, RSpeed);
 
 			}
+
+
+
+			//}
 
 
 		}
 
 		//firstIteration = true;
-		Wait(2.0); 				//    for 10 seconds
+		//Wait(2.0); 				//    for 10 seconds
 	}
 
 

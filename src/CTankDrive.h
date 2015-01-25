@@ -20,6 +20,7 @@ public:
   CTankDrive(int Left1, int Left2, int Right1, int Right2, Joystick *pLS, Joystick *pRS);
   void SetupGears(int HighSolenoid, int LowSolenoid);
   void SetupEncoders(UINT32 LeftA, UINT32 LeftB, UINT32 RightA, UINT32 RightB);
+  void ResetEncoders();
   void SetBalanceGyro(UINT32 Channel);
   void SetMotorSpeeds(double Left, double Right);
   void GetPositions(INT32 *pLeft, INT32 *pRight);
