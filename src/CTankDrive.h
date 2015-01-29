@@ -11,6 +11,9 @@
 #define DAMP_BUF_SIZE	20
 #define UINT32 uint32_t
 #define INT32 int32_t
+
+
+
 class CTankDrive {
 public:
   typedef enum {kHighSpeed, kLowSpeed, kNone} GearMode;
@@ -32,6 +35,7 @@ public:
   void AutoBalance();
   void WatchdogOff();
   void WatchdogOn(float timeout);
+
 
 private:
   CTankDrive();

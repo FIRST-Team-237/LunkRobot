@@ -9,7 +9,6 @@
 
 CTankDrive *CAutonomous::m_pDrive = NULL;
 IMU *CAutonomous::m_pNavX = NULL;
-
 const double DriveSpeed = 0.70;
 
 
@@ -57,14 +56,15 @@ void CAutonomous::RunAuto()
 		{
 			LSpeed = RSpeed = 0.0;
 			Index++;
+			DelteMeLater = 0;
 		}
 		// Correct for yaw because Joe designed a shitty drive system
 		else
 		{
 			LSpeed = RSpeed = DriveSpeed;
 			Error = (double)Yaw / 20;
-			LSpeed -= Error;
-			RSpeed += Error;
+			LSpeed -= Error/2;
+			RSpeed += Error/2;
 		}
 		break;
 	case 7:
@@ -95,8 +95,8 @@ void CAutonomous::RunAuto()
 		// Correct for yaw because Joe's drive system is still shitty
 		else
 		{
-			LSpeed = RSpeed = DriveSpeed;
-			Error = (double)Yaw / 20;
+			LSpeed = RSpeed = 0.0 - DriveSpeed;
+			Error = (double)(Yaw + 90) / 20;
 			LSpeed -= Error;
 			RSpeed += Error;
 		}

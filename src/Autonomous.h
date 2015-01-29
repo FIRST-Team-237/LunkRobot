@@ -26,7 +26,6 @@ private:
 private:
 	static CTankDrive *m_pDrive;
 	static IMU *m_pNavX;
-
 };
 
 
