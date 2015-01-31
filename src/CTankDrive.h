@@ -5,6 +5,7 @@
  *      Author: DanTest
  */
 #include "WPILib.h"
+#include "navX/IMU.h"
 #include <stdint.h>
 #ifndef SRC_CTANKDRIVE_H_
 #define SRC_CTANKDRIVE_H_
@@ -25,7 +26,7 @@ public:
   void SetupEncoders(UINT32 LeftA, UINT32 LeftB, UINT32 RightA, UINT32 RightB);
   void ResetEncoders();
   void SetBalanceGyro(UINT32 Channel);
-  void SetMotorSpeeds(double Left, double Right);
+  void SetMotorSpeeds(double Left, double Right, bool UsePID = false);
   void GetPositions(INT32 *pLeft, INT32 *pRight);
   void Go();
   void Go(Joystick *pL, Joystick *pR);
@@ -35,6 +36,18 @@ public:
   void AutoBalance();
   void WatchdogOff();
   void WatchdogOn(float timeout);
+  void UsePID();
+  void ResetNavX();
+  void ZeroNavXYaw();
+  float GetNavXYaw();
+  float GetNavXPitch();
+  float GetNavXRoll();
+  bool IsNavXCalibrating();
+  bool IsNavXConnected();
+  double GetNavXUpdateCount();
+  double GetNavXByteCount();
+  float GetNavXCompassHeading();
+  void initNavX();
 
 
 private:
@@ -43,6 +56,7 @@ private:
   void CheckGear(Joystick *pStick);
   double DampenLeft(double LeftIn);
   double DampenRight(double RightIn);
+
 
 private:
   Jaguar *m_pLRDrive;
@@ -57,6 +71,10 @@ private:
   Joystick *m_pRStick;
   RobotDrive *m_pRobot;
   Gyro* m_pBalGyro;
+  IMU *m_pNavX;
+  SerialPort *m_pNavXPort;
+  NetworkTable *m_pNetworkTable;
+  uint8_t m_navXUpdateRateHz;
   double m_LeftBuff[DAMP_BUF_SIZE];
   double m_RightBuff[DAMP_BUF_SIZE];
 };

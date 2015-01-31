@@ -28,6 +28,7 @@ CTankDrive::CTankDrive(int Left,int Right, Joystick *pLS, Joystick *pRS)
   m_pRobot = new RobotDrive(m_pLRDrive, m_pRRDrive);
   m_pLStick = pLS;
   m_pRStick = pRS;
+  //initNavX();
 }
 
 
@@ -40,6 +41,7 @@ CTankDrive::CTankDrive(int Left1, int Left2, int Right1, int Right2)
   m_pRobot = new RobotDrive(m_pLRDrive, m_pLFDrive, m_pRRDrive, m_pRFDrive);
   m_pLStick = NULL;
   m_pRStick = NULL;
+  //initNavX();
 }
 
 
@@ -52,6 +54,7 @@ CTankDrive::CTankDrive(int Left1, int Left2, int Right1, int Right2, Joystick *p
   m_pRobot = new RobotDrive(m_pLRDrive, m_pLFDrive, m_pRRDrive, m_pRFDrive);
   m_pLStick = pLS;
   m_pRStick = pRS;
+  //initNavX();
 }
 
 
@@ -131,7 +134,7 @@ void CTankDrive::GetPositions(INT32 *pLeft, INT32 *pRight)
 }
 
 
-void CTankDrive::SetMotorSpeeds(double Left, double Right)
+void CTankDrive::SetMotorSpeeds(double Left, double Right, bool UsePID)
 {
   m_pLRDrive->Set(0.0 - Left, 1);
   if (m_pLFDrive)
@@ -287,4 +290,55 @@ void CTankDrive::WatchdogOn(float timeout)
 		m_pRFDrive->SetExpiration(timeout);
 		m_pRFDrive->SetSafetyEnabled(true);
 	}
+}
+// NavX Functions
+void CTankDrive::initNavX()
+{
+	//m_pNetworkTable = NetworkTable::GetTable("datatable");
+	m_pNavXPort = new SerialPort(57600,SerialPort::kMXP);
+	m_navXUpdateRateHz = 50;
+	m_pNavX = new IMU(m_pNavXPort,m_navXUpdateRateHz);
+	if ( m_pNavX ) {
+		//LiveWindow::GetInstance()->AddSensor("IMU","Gyro",m_pNavX);
+	}
+}
+float CTankDrive::GetNavXYaw()
+{
+	return m_pNavX->GetYaw();
+}
+float CTankDrive::GetNavXRoll()
+{
+	return m_pNavX->GetRoll();
+}
+float CTankDrive::GetNavXPitch()
+{
+	return m_pNavX->GetPitch();
+}
+double CTankDrive::GetNavXByteCount()
+{
+	return m_pNavX->GetByteCount();
+}
+double CTankDrive::GetNavXUpdateCount()
+{
+	return m_pNavX->GetUpdateCount();
+}
+void CTankDrive::ResetNavX()
+{
+	m_pNavX->Restart();
+}
+void CTankDrive::ZeroNavXYaw()
+{
+	m_pNavX->ZeroYaw();
+}
+bool CTankDrive::IsNavXCalibrating()
+{
+	return m_pNavX->IsCalibrating();
+}
+bool CTankDrive::IsNavXConnected()
+{
+	return m_pNavX->IsConnected();
+}
+float CTankDrive::GetNavXCompassHeading()
+{
+	return m_pNavX->GetCompassHeading();
 }

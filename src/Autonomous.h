@@ -17,7 +17,7 @@ class CAutonomous
 {
 public:
 	static void RunAuto();
-	static void Setup(CTankDrive *pDrive, IMU *pNavX);
+	static void Setup(CTankDrive *pDrive);
 
 private:
 	CAutonomous();
