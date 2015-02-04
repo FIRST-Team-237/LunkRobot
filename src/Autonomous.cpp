@@ -38,11 +38,12 @@ void CAutonomous::RunAuto()
 		LSpeed = RSpeed = 0.0;
 		///
 		// GRAB TOTE HERE
-		if (++DelteMeLater > 200)
+		if (++DelteMeLater > 100)
 			Index++;
 		//
 		///
-		m_pDrive->ResetEncoders();
+		else
+			m_pDrive->ResetEncoders();
 		break;
 	case 1:
 	case 3:
@@ -52,7 +53,7 @@ void CAutonomous::RunAuto()
 		else
 			Distance = 9000;
 		// Get info from sensors
-		Yaw = m_pDrive->GetNavXYaw();
+		Yaw = m_pDrive->GetNavXYaw() + 1.850;
 		m_pDrive->GetPositions(&LeftPos, &RightPos);
 
 		// Have we gone the required distance?
