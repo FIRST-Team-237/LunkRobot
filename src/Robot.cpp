@@ -2,6 +2,7 @@
 #include "WPILib.h"
 #include "navX/IMU.h"
 #include "Autonomous.h"
+#include "ArmControl.h"
 
 class Robot: public IterativeRobot
 {
@@ -10,7 +11,7 @@ private:
 	CTankDrive *m_pDrive; // Drive system
 	Joystick *m_pStickL;
 	Joystick *m_pStickR;
-
+	ArmControl *m_pArmControl;
 	bool m_firstIteration;
 	PowerDistributionPanel m_pdp;
 	INT32 m_LeftPos, m_RightPos;
@@ -23,10 +24,11 @@ private:
 		m_pStickL = new Joystick(0);
 		m_pStickR = new Joystick(1);
 		m_pDrive = new CTankDrive(0, 1, 2, 3, m_pStickL, m_pStickR);
+		m_pArmControl = new ArmControl(1 , 2);
 		m_pDrive->SetupEncoders(0,1,2,3);
 		//m_pDrive->WatchdogOff();
 		m_pDrive->WatchdogOn(2.0);
-
+		m_pArmControl->SetUpEncoders(4,5);
 		m_firstIteration = true;
 		CAutonomous::Setup(m_pDrive);
 		m_pDrive->initNavX();
@@ -58,6 +60,23 @@ private:
 	void TeleopPeriodic()
 	{
 		m_pDrive->Go();
+		if (m_pStickL->GetRawButton(2)){
+			m_pArmControl->TestControlVert(m_pStickL->GetRawButton(2),false);
+		} else if (m_pStickL->GetRawButton(3)){
+			m_pArmControl->TestControlVert(m_pStickL->GetRawButton(3),true);
+		} else {
+			m_pArmControl->TestControlVert(m_pStickL->GetRawButton(2),false);
+			m_pArmControl->TestControlVert(m_pStickL->GetRawButton(3),true);
+		}
+		if (m_pStickL->GetRawButton(4)){
+			m_pArmControl->TestControlHorz(m_pStickL->GetRawButton(4),false);
+		} else if (m_pStickL->GetRawButton(5)) {
+			m_pArmControl->TestControlHorz(m_pStickL->GetRawButton(5),true);
+		} else {
+			m_pArmControl->TestControlHorz(m_pStickL->GetRawButton(4),false);
+			m_pArmControl->TestControlHorz(m_pStickL->GetRawButton(5),true);
+		}
+
 		// Get/display drive encoder values
 					//m_pDrive->GetPositions(&m_LeftPos, &m_RightPos);
 					//SmartDashboard::PutNumber( "Left", m_LeftPos);
@@ -78,6 +97,9 @@ private:
 					SmartDashboard::PutNumber("Voltage", m_pdp.GetVoltage());
 					SmartDashboard::PutNumber("Temperature", m_pdp.GetTemperature());
 			*/
+		SmartDashboard::PutNumber("Arm Horizontal Encoder",m_pArmControl->GetEncHorz());
+		SmartDashboard::PutNumber("Arm Vertical Encoder",m_pArmControl->GetEncVert());
+
 	}
 
 

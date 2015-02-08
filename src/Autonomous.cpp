@@ -10,7 +10,7 @@
 CTankDrive *CAutonomous::m_pDrive = NULL;
 IMU *CAutonomous::m_pNavX = NULL;
 const double DriveSpeed = 0.90;
-
+const float m_adjustDegree = 1.850;
 
 void CAutonomous::Setup(CTankDrive *pDrive)
 {
@@ -53,7 +53,7 @@ void CAutonomous::RunAuto()
 		else
 			Distance = 9000;
 		// Get info from sensors
-		Yaw = m_pDrive->GetNavXYaw() + 1.850;
+		Yaw = m_pDrive->GetNavXYaw() + m_adjustDegree;
 		m_pDrive->GetPositions(&LeftPos, &RightPos);
 
 		// Have we gone the required distance?
