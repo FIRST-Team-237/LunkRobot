@@ -20,34 +20,46 @@ const int c_HalfHorzPos = 0;
 const int c_FullVertPos = 0;
 const int c_HalfVertPos = 0;
 const int c_ZeroVertPos = 0;
-const float c_VertMotorSpeed = 0.75;
-const float c_HorzMotorSpeed = 0.90;
+const float c_VertMotorSpeed = 0.50;
+const float c_HorzMotorSpeedOut = 0.50;
+const float c_HorzMotorSpeedIn = 1.00;
 const int c_TestVertPos = 0;
+const int c_TestHorzPos = 0;
 const int c_HorzPlay = 0;
 
 class ArmControl {
-private:
-	enum ArmState
+public:
+	typedef enum VState
 	{
-		HOME,
-		HORZHALF,
-		HORZFULL,
+		VERTHOME,
 		VERTNONE,
 		VERTHALF,
 		VERTFULL,
-		IDLE,
-		DONE
-	};
-	ArmState m_CurrentState;
-	ArmState m_PrevState;
-	Encoder *m_pHorzEnc;
+		VERTIDLE,
+		VERTDONE
+	} VertState;
+
+	typedef enum HState
+	{
+		HORHOME,
+		HORHALF,
+		HORFULL,
+		HORIDLE,
+		HORDONE
+	} HorState;
+
+	VertState m_CurVertState;
+	VertState m_PrevVertState;
+	HorState m_CurHorState;
+	HorState m_PrevHorState;
+	//Encoder *m_pHorzEnc;
 
 	//TalonSRX *m_pHorizontalMotorOne;
 	CANTalon *m_pVerticalMotor;
 	CANTalon *m_pHorizontalMotor;
 	int m_CanCount;
 	void init();
-	void ExecuteStateAutonomous();
+
 
 public:
 	ArmControl(int horzontalTalonOne, int verticalCANTalon);
@@ -55,8 +67,15 @@ public:
 	void TestControlVert(bool pressed , bool dir);
 	void TestControlHorz(bool pressed , bool dir);
 	void SetUpEncoders(UINT32 HorzEncA, UINT32 HorzEncB);
+	void SetVertState(VertState State);
+	void SetHorState(HorState State);
+	void ExecuteStateAutonomous();
+	void ResetTalons(int horzontalTalonOne, int verticalCANTalon);
 	int GetEncVert();
 	int GetEncHorz();
+	VertState GetVertState();
+	HorState GetHorState();
+
 };
 
 #endif /* ARMCONTROL_H_ */

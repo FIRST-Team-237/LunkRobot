@@ -28,7 +28,7 @@ private:
 		m_pDrive->SetupEncoders(0,1,2,3);
 		//m_pDrive->WatchdogOff();
 		m_pDrive->WatchdogOn(2.0);
-		m_pArmControl->SetUpEncoders(4,5);
+		//m_pArmControl->SetUpEncoders(4,5);
 		m_firstIteration = true;
 		CAutonomous::Setup(m_pDrive);
 		m_pDrive->initNavX();
@@ -60,6 +60,9 @@ private:
 	void TeleopPeriodic()
 	{
 		m_pDrive->Go();
+		if (true == m_pStickL->GetRawButton(6)){
+			m_pArmControl->ResetTalons(1,2);
+		}
 		if (m_pStickL->GetRawButton(2)){
 			m_pArmControl->TestControlVert(m_pStickL->GetRawButton(2),false);
 		} else if (m_pStickL->GetRawButton(3)){

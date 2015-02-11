@@ -12,21 +12,33 @@ ArmControl::ArmControl(int horzontalTalonOne, int verticalCANTalon) {
 	//m_pHorizontalMotorOne = new TalonSRX(horzontalTalonOne);
 	m_pHorizontalMotor = new CANTalon(horzontalTalonOne);
 	m_pVerticalMotor = new CANTalon(verticalCANTalon);
-
+	m_pHorizontalMotor->SetSensorDirection(true);
+	m_CurHorState = HORIDLE;
+	m_CurVertState = VERTIDLE;
 }
 void ArmControl::ExecuteStateAutonomous()
 {
-	switch (m_CurrentState)
+	switch (m_CurHorState)
 	{
-	case HOME:
+	case HORHOME:
 		m_pHorizontalMotor->SetPosition(c_HomeHorzPos);
-		m_pVerticalMotor->SetPosition(c_HomeVertPos);
 		break;
-	case HORZHALF:
+	case HORHALF:
 		m_pHorizontalMotor->SetPosition(c_HalfHorzPos);
 		break;
-	case HORZFULL:
+	case HORFULL:
 		m_pHorizontalMotor->SetPosition(c_FullHorzPos);
+		break;
+	case HORIDLE:
+		break;
+	case HORDONE:
+		break;
+	}
+
+	switch (m_CurVertState)
+	{
+	case VERTHOME:
+		m_pVerticalMotor->SetPosition(c_HomeVertPos);
 		break;
 	case VERTNONE:
 		m_pVerticalMotor->SetPosition(c_ZeroVertPos);
@@ -37,16 +49,19 @@ void ArmControl::ExecuteStateAutonomous()
 	case VERTFULL:
 		m_pVerticalMotor->SetPosition(c_FullVertPos);
 		break;
-	case IDLE:
+	case VERTIDLE:
 		break;
-	case DONE:
+	case VERTDONE:
 		break;
 	}
 }
-void ArmControl::SetUpEncoders(UINT32 HorzEncA, UINT32 HorzEncB)
-{
-	m_pHorzEnc = new Encoder(HorzEncA , HorzEncB , true, Encoder::k4X);
-}
+
+
+//void ArmControl::SetUpEncoders(UINT32 HorzEncA, UINT32 HorzEncB)
+//{
+//	m_pHorzEnc = new Encoder(HorzEncA , HorzEncB , true, Encoder::k4X);
+//}
+
 void ArmControl::TestControlVert(bool pressed , bool dir)
 {
 	if (true == dir){
@@ -65,19 +80,37 @@ void ArmControl::TestControlVert(bool pressed , bool dir)
 }
 void ArmControl::TestControlHorz(bool pressed, bool dir)
 {
-	if (true == dir){
+/*	if (true == dir){
 			if (true == pressed){
-				m_pHorizontalMotor->Set(c_HorzMotorSpeed,0);
+				m_pHorizontalMotor->Set(c_HorzMotorSpeedOut,0);
 			} else {
 				m_pHorizontalMotor->Set(0 , 0);
 			}
 		} else if (false == dir) {
 			if (true == pressed){
-				m_pHorizontalMotor->Set(-c_HorzMotorSpeed,0);
+				m_pHorizontalMotor->Set(-c_HorzMotorSpeedIn,0);
 			} else {
 				m_pHorizontalMotor->Set(0 , 0);
 			}
+		}*/
+	if (true == dir){
+		if (true == pressed)
+		{
+			if ( -8000 < m_pHorizontalMotor->GetEncPosition()){
+				m_pHorizontalMotor->Set(c_HorzMotorSpeedOut,0);
+			} else {
+				m_pHorizontalMotor->Set(0,0);
+			}
+		} else {
+			//m_pHorizontalMotor->Set(0,0);
 		}
+	} else if (false == dir) {
+		if (true == pressed){
+			m_pHorizontalMotor->Set(-c_HorzMotorSpeedIn,0);
+		} else {
+			m_pHorizontalMotor->Set(0 , 0);
+		}
+	}
 }
 int ArmControl::GetEncVert()
 {
@@ -91,3 +124,35 @@ ArmControl::~ArmControl() {
 	// TODO Auto-generated destructor stub
 }
 
+void ArmControl::SetVertState(VertState State)
+{
+	m_CurVertState = State;
+}
+
+void ArmControl::SetHorState(HorState State)
+{
+	m_CurHorState = State;
+}
+
+ArmControl::VertState ArmControl::GetVertState()
+{
+	return m_CurVertState;
+}
+
+ArmControl::HorState ArmControl::GetHorState()
+{
+	return m_CurHorState;
+}
+void ArmControl::ResetTalons(int horzontalTalonOne, int verticalCANTalon)
+{
+/*	m_pHorizontalMotor->~CANTalon();
+	m_pVerticalMotor->~CANTalon();
+	m_pHorizontalMotor = new CANTalon(horzontalTalonOne);
+	m_pVerticalMotor = new CANTalon(verticalCANTalon);
+	m_pHorizontalMotor->SetSensorDirection(true);
+	m_CurHorState = HORIDLE;
+	m_CurVertState = VERTIDLE;
+*/
+	m_pHorizontalMotor->SetPosition(0);
+
+}
