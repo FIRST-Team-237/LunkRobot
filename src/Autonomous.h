@@ -11,13 +11,13 @@
 #include "CTankDrive.h"
 #include "WPILib.h"
 #include "navX/IMU.h"
-
+#include "ArmControl.h"
 
 class CAutonomous
 {
 public:
 	static void RunAuto();
-	static void Setup(CTankDrive *pDrive);
+	static void Setup(CTankDrive *pDrive, ArmControl *pArm);
 
 private:
 	CAutonomous();
@@ -25,6 +25,7 @@ private:
 
 private:
 	static CTankDrive *m_pDrive;
+	static ArmControl *m_pArm;
 	static IMU *m_pNavX;
 
 };

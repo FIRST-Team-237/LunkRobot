@@ -8,13 +8,15 @@
 #include "Autonomous.h"
 
 CTankDrive *CAutonomous::m_pDrive = NULL;
+ArmControl *CAutonomous::m_pArm = NULL;
 IMU *CAutonomous::m_pNavX = NULL;
 const double DriveSpeed = 0.90;
 const float m_adjustDegree = 1.850;
 
-void CAutonomous::Setup(CTankDrive *pDrive)
+void CAutonomous::Setup(CTankDrive *pDrive, ArmControl *pArm)
 {
 	m_pDrive = pDrive;
+	m_pArm = pArm;
 }
 
 
@@ -26,8 +28,10 @@ void CAutonomous::RunAuto()
 	double Error;
 	float Yaw = 0.0;
 	int LeftPos, RightPos;
-	static int DelteMeLater = 0;
 	int Distance;
+	ArmControl::ArmState GrabState;
+
+	GrabState = m_pArm->HandleStates();
 
 	switch (Index)
 	{
@@ -36,12 +40,8 @@ void CAutonomous::RunAuto()
 	case 4:
 	case 6:
 		LSpeed = RSpeed = 0.0;
-		///
-		// GRAB TOTE HERE
-		if (++DelteMeLater > 100)
+		if (GrabState == ArmControl::ARM_IDLE)
 			Index++;
-		//
-		///
 		else
 			m_pDrive->ResetEncoders();
 		break;
@@ -61,7 +61,7 @@ void CAutonomous::RunAuto()
 		{
 			LSpeed = RSpeed = 0.0;
 			Index++;
-			DelteMeLater = 0;
+			m_pArm->GrabBin();
 		}
 		// Correct for yaw because Joe designed a shitty drive system
 		else
@@ -112,6 +112,7 @@ void CAutonomous::RunAuto()
 		LSpeed = RSpeed = 0.0;
 		break;
 	}
+
 
 	m_pDrive->SetMotorSpeeds(LSpeed, RSpeed);
 

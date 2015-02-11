@@ -30,7 +30,7 @@ private:
 		m_pDrive->WatchdogOn(2.0);
 		//m_pArmControl->SetUpEncoders(4,5);
 		m_firstIteration = true;
-		CAutonomous::Setup(m_pDrive);
+		CAutonomous::Setup(m_pDrive, m_pArmControl);
 		m_pDrive->initNavX();
 	}
 
@@ -79,6 +79,13 @@ private:
 			m_pArmControl->TestControlHorz(m_pStickL->GetRawButton(4),false);
 			m_pArmControl->TestControlHorz(m_pStickL->GetRawButton(5),true);
 		}
+		if (m_pStickL->GetRawButton(8))
+		{
+			m_pArmControl->GrabBin();
+			m_pArmControl->HandleStates();
+		}
+
+
 
 		// Get/display drive encoder values
 					//m_pDrive->GetPositions(&m_LeftPos, &m_RightPos);
