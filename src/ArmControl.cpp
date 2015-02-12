@@ -20,6 +20,7 @@ ArmControl::ArmControl(int horzontalTalonOne, int verticalCANTalon) {
 
 void ArmControl::TestControlVert(VertDir dir)
 {
+	m_HorDir = HOR_IDLE;
 	m_VertDir = dir;
 	m_ArmState = ARM_MANUAL;
 }
@@ -27,6 +28,7 @@ void ArmControl::TestControlVert(VertDir dir)
 
 void ArmControl::TestControlHorz(HorDir dir)
 {
+	m_VertDir = VERT_IDLE;
 	m_HorDir = dir;
 	m_ArmState = ARM_MANUAL;
 }
@@ -100,6 +102,8 @@ ArmControl::ArmState ArmControl::HandleStates()
 			HorSpeed = c_HorzMotorSpeedIn;
 			break;
 		}
+		m_pHorizontalMotor->Set(HorSpeed, 0);
+		m_pVerticalMotor->Set(VertSpeed, 0);
 		return ARM_MANUAL;
 	}
 
@@ -120,7 +124,7 @@ ArmControl::ArmState ArmControl::HandleStates()
 		case 2:
 			// Move up to bin and start back
 			VertSpeed = c_VertMotorSpeedUp;
-			HorSpeed = c_HorzMotorSpeedIn;
+			HorSpeed = 0.0;//c_HorzMotorSpeedIn;
 			if (VertPos < c_VertPos1)
 				m_Index++;
 			break;

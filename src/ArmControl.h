@@ -14,7 +14,7 @@
 
 
 const int c_HomeHorzPos = 0;
-const int c_HorPos1 = -8000;
+const int c_HorPos1 = -6800;
 const int c_HorPos2 = -2000;
 const int c_HorPos3 = -500;
 
@@ -26,8 +26,8 @@ const int c_VertPos4 = 500;
 
 const float c_VertMotorSpeedUp = 0.50;
 const float c_VertMotorSpeedDn = -0.50;
-const float c_HorzMotorSpeedOut = 0.50;
-const float c_HorzMotorSpeedIn = -0.50;
+const float c_HorzMotorSpeedOut = 1.00;
+const float c_HorzMotorSpeedIn = -.50;
 
 const int c_TestVertPos = 0;
 const int c_TestHorzPos = 0;

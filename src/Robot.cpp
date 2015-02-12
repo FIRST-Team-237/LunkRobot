@@ -81,7 +81,15 @@ private:
 		{
 			m_pArmControl->GrabBin();
 		}
-		m_pArmControl->HandleStates();
+		if (m_pStickL->GetRawButton(9))
+			m_pArmControl->HandleStates();
+		else
+		{
+			m_pArmControl->m_pHorizontalMotor->Set(0, 0);
+			m_pArmControl->m_pVerticalMotor->Set(0, 0);
+		}
+
+
 
 
 		// Get/display drive encoder values
