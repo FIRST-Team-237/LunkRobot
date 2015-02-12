@@ -28,6 +28,7 @@ const float c_VertMotorSpeedUp = 0.50;
 const float c_VertMotorSpeedDn = -0.50;
 const float c_HorzMotorSpeedOut = 0.50;
 const float c_HorzMotorSpeedIn = -0.50;
+
 const int c_TestVertPos = 0;
 const int c_TestHorzPos = 0;
 const int c_HorzPlay = 0;
@@ -39,35 +40,26 @@ public:
 	{
 		ARM_IDLE,
 		ARM_MOVING,
+		ARM_MANUAL
 	} ArmState;
 
-	typedef enum VState
+	typedef enum VERTDIR
 	{
-		VERTHOME,
-		VERTNONE,
-		VERTHALF,
-		VERTFULL,
-		VERTIDLE,
-		VERTDONE
-	} VertState;
+		VERT_IDLE,
+		VERT_UP,
+		VERT_DN
+	} VertDir;
 
-	typedef enum HState
+	typedef enum HORDIR
 	{
-		HORHOME,
-		HORHALF,
-		HORFULL,
-		HORIDLE,
-		HORDONE
-	} HorState;
+		HOR_IDLE,
+		HOR_OUT,
+		HOR_IN
+	} HorDir;
 
 	ArmState m_ArmState;
-	VertState m_CurVertState;
-	VertState m_PrevVertState;
-	HorState m_CurHorState;
-	HorState m_PrevHorState;
-	//Encoder *m_pHorzEnc;
-
-	//TalonSRX *m_pHorizontalMotorOne;
+	VertDir m_VertDir;
+	HorDir m_HorDir;
 	CANTalon *m_pVerticalMotor;
 	CANTalon *m_pHorizontalMotor;
 	int m_CanCount;
@@ -77,17 +69,12 @@ public:
 public:
 	ArmControl(int horzontalTalonOne, int verticalCANTalon);
 	virtual ~ArmControl();
-	void TestControlVert(bool pressed , bool dir);
-	void TestControlHorz(bool pressed , bool dir);
+	void TestControlVert(VertDir dir);
+	void TestControlHorz(HorDir dir);
 	void SetUpEncoders(UINT32 HorzEncA, UINT32 HorzEncB);
-	void SetVertState(VertState State);
-	void SetHorState(HorState State);
-	void ExecuteStateAutonomous();
 	void ResetTalons(int horzontalTalonOne, int verticalCANTalon);
 	int GetEncVert();
 	int GetEncHorz();
-	VertState GetVertState();
-	HorState GetHorState();
 	void GrabBin();
 	ArmState HandleStates();
 

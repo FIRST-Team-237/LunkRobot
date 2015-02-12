@@ -60,31 +60,28 @@ private:
 	void TeleopPeriodic()
 	{
 		m_pDrive->Go();
+
+
 		if (true == m_pStickL->GetRawButton(6)){
 			m_pArmControl->ResetTalons(1,2);
 		}
-		if (m_pStickL->GetRawButton(2)){
-			m_pArmControl->TestControlVert(m_pStickL->GetRawButton(2),false);
-		} else if (m_pStickL->GetRawButton(3)){
-			m_pArmControl->TestControlVert(m_pStickL->GetRawButton(3),true);
-		} else {
-			m_pArmControl->TestControlVert(m_pStickL->GetRawButton(2),false);
-			m_pArmControl->TestControlVert(m_pStickL->GetRawButton(3),true);
-		}
-		if (m_pStickL->GetRawButton(4)){
-			m_pArmControl->TestControlHorz(m_pStickL->GetRawButton(4),false);
-		} else if (m_pStickL->GetRawButton(5)) {
-			m_pArmControl->TestControlHorz(m_pStickL->GetRawButton(5),true);
-		} else {
-			m_pArmControl->TestControlHorz(m_pStickL->GetRawButton(4),false);
-			m_pArmControl->TestControlHorz(m_pStickL->GetRawButton(5),true);
-		}
+
+		if (m_pStickL->GetRawButton(2))
+			m_pArmControl->TestControlVert(ArmControl::VERT_UP);
+		else if (m_pStickL->GetRawButton(3))
+			m_pArmControl->TestControlVert(ArmControl::VERT_DN);
+		else if (m_pStickL->GetRawButton(4))
+			m_pArmControl->TestControlHorz(ArmControl::HOR_IN);
+		else if (m_pStickL->GetRawButton(5))
+			m_pArmControl->TestControlHorz(ArmControl::HOR_OUT);
+		else
+			m_pArmControl->m_ArmState = ArmControl::ARM_IDLE;
+
 		if (m_pStickL->GetRawButton(8))
 		{
 			m_pArmControl->GrabBin();
-			m_pArmControl->HandleStates();
 		}
-
+		m_pArmControl->HandleStates();
 
 
 		// Get/display drive encoder values
