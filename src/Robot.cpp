@@ -3,6 +3,7 @@
 #include "navX/IMU.h"
 #include "Autonomous.h"
 #include "ArmControl.h"
+#include "LiftControl.h"
 
 class Robot: public IterativeRobot
 {
@@ -12,6 +13,7 @@ private:
 	Joystick *m_pStickL;
 	Joystick *m_pStickR;
 	ArmControl *m_pArmControl;
+	LiftControl *m_pLiftControl;
 	bool m_firstIteration;
 	PowerDistributionPanel m_pdp;
 	INT32 m_LeftPos, m_RightPos;
@@ -26,6 +28,7 @@ private:
 		m_pDrive = new CTankDrive(0, 1, 2, 3, m_pStickL, m_pStickR);
 		m_pArmControl = new ArmControl(1 , 2);
 		m_pDrive->SetupEncoders(0,1,2,3);
+		m_pLiftControl = new LiftControl(4,5,6);
 		//m_pDrive->WatchdogOff();
 		m_pDrive->WatchdogOn(2.0);
 		//m_pArmControl->SetUpEncoders(4,5);
