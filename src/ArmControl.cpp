@@ -117,25 +117,34 @@ ArmControl::ArmState ArmControl::HandleStates()
 			break;
 		case 1:
 			// Move arm out to bin
+			VertSpeed = c_VertMotorSpeedDn;
 			HorSpeed = c_HorzMotorSpeedOut;
-			if (HorPos < c_HorPos1)
+			if (VertPos > c_VertPos11)
+				VertSpeed = 0.0;
+			if (HorPos < c_HorPos11)
 				m_Index++;
 			break;
 		case 2:
+			// Move arm out to bin
+			HorSpeed = c_HorzMotorSpeedOut/2;
+			if (HorPos < c_HorPos1)
+				m_Index++;
+			break;
+		case 3:
 			// Move up to bin and start back
 			VertSpeed = c_VertMotorSpeedUp;
 			HorSpeed = 0.0;//c_HorzMotorSpeedIn;
 			if (VertPos < c_VertPos1)
 				m_Index++;
 			break;
-		case 3:
+		case 4:
 			// Keep going up and back
 			VertSpeed = c_VertMotorSpeedUp;
 			HorSpeed = c_HorzMotorSpeedIn;
 			if (VertPos < c_VertPos2)
 				m_Index++;
 			break;
-		case 4:
+		case 5:
 			// Move down and continue back
 			VertSpeed = c_VertMotorSpeedDn;
 			HorSpeed = c_HorzMotorSpeedIn;
@@ -152,14 +161,14 @@ ArmControl::ArmState ArmControl::HandleStates()
 			if (HorDone == true && VertDone == true)
 				m_Index++;
 			break;
-		case 5:
+		case 6:
 			// Move down to drop bin
 			VertSpeed = c_VertMotorSpeedDn;
 			HorSpeed = 0.0;
 			if (VertPos > c_VertPos4)
 				m_Index++;
 			break;
-		case 6:
+		case 7:
 			// Move horizontal in
 			VertSpeed = 0.0;
 			HorSpeed = c_HorzMotorSpeedIn;
