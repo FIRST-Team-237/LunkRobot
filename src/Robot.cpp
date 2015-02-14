@@ -12,6 +12,7 @@ private:
 	CTankDrive *m_pDrive; // Drive system
 	Joystick *m_pStickL;
 	Joystick *m_pStickR;
+	Joystick *m_pStickC;
 	ArmControl *m_pArmControl;
 	LiftControl *m_pLiftControl;
 	bool m_firstIteration;
@@ -25,10 +26,11 @@ private:
 		lw = LiveWindow::GetInstance();
 		m_pStickL = new Joystick(0);
 		m_pStickR = new Joystick(1);
+		m_pStickC = new Joystick(3);
 		m_pDrive = new CTankDrive(0, 1, 2, 3, m_pStickL, m_pStickR);
 		m_pArmControl = new ArmControl(1 , 2);
 		m_pDrive->SetupEncoders(0,1,2,3);
-		m_pLiftControl = new LiftControl(4,5,6);
+		m_pLiftControl = new LiftControl(4, 5, 6, 7);
 		//m_pDrive->WatchdogOff();
 		m_pDrive->WatchdogOn(2.0);
 		//m_pArmControl->SetUpEncoders(4,5);
@@ -92,9 +94,14 @@ private:
 			m_pArmControl->m_pVerticalMotor->Set(0, 0);
 		}
 
+		if (m_pStickC->GetRawButton(8))
+		{
+			m_pLiftControl->GrabTote(m_pStickC->GetRawButton(4));
+			m_pLiftControl->ReleaseTote(m_pStickC->GetRawButton(5));
+			m_pLiftControl->PullInTote(m_pStickC->GetRawButton(1));
+			m_pLiftControl->PushOutTote(m_pStickC->GetRawButton(2));
 
-
-
+		}
 		// Get/display drive encoder values
 					//m_pDrive->GetPositions(&m_LeftPos, &m_RightPos);
 					//SmartDashboard::PutNumber( "Left", m_LeftPos);
