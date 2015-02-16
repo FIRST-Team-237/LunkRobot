@@ -10,8 +10,8 @@
 CTankDrive *CAutonomous::m_pDrive = NULL;
 ArmControl *CAutonomous::m_pArm = NULL;
 IMU *CAutonomous::m_pNavX = NULL;
-const double DriveSpeed = 0.90;
-const float m_adjustDegree = 1.850;
+const double DriveSpeed = 0.98;
+const float m_adjustDegree = 0.950;
 
 void CAutonomous::Setup(CTankDrive *pDrive, ArmControl *pArm)
 {
@@ -40,7 +40,7 @@ void CAutonomous::RunAuto()
 	case 4:
 	case 6:
 		LSpeed = RSpeed = 0.0;
-		if (GrabState == ArmControl::ARM_IDLE)
+		if (GrabState == ArmControl::ARM_IDLE || GrabState == ArmControl::ARM_FINISHING)
 			Index++;
 		else
 			m_pDrive->ResetEncoders();
@@ -49,15 +49,15 @@ void CAutonomous::RunAuto()
 	case 3:
 	case 5:
 		if (Index == 3)
-			Distance = 17500;
+			Distance = 7750; //8250;
 		else
-			Distance = 9000;
+			Distance = 5000; //5250;
 		// Get info from sensors
 		Yaw = m_pDrive->GetNavXYaw() + m_adjustDegree;
 		m_pDrive->GetPositions(&LeftPos, &RightPos);
 
 		// Have we gone the required distance?
-		if (LeftPos + RightPos >= Distance)
+		if (LeftPos >= Distance || RightPos >= Distance)
 		{
 			LSpeed = RSpeed = 0.0;
 			Index++;

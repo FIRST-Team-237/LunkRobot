@@ -13,6 +13,7 @@ ArmControl::ArmControl(int horzontalTalonOne, int verticalCANTalon) {
 	m_pVerticalMotor = new CANTalon(verticalCANTalon);
 	m_pHorizontalMotor->SetSensorDirection(true);
 	m_pVerticalMotor->SetSensorDirection(false);
+	m_ArmState = ARM_IDLE;
 	m_Index = 0;
 }
 
@@ -131,7 +132,7 @@ ArmControl::ArmState ArmControl::HandleStates()
 				m_Index++;
 			break;
 		case 3:
-			// Move up to bin and start back
+			// Move up to bin
 			VertSpeed = c_VertMotorSpeedUp;
 			HorSpeed = 0.0;//c_HorzMotorSpeedIn;
 			if (VertPos < c_VertPos1)
@@ -159,25 +160,41 @@ ArmControl::ArmState ArmControl::HandleStates()
 				HorDone = true;
 			}
 			if (HorDone == true && VertDone == true)
+			{
+				//m_ArmState = ARM_FINISHING;
 				m_Index++;
+			}
 			break;
 		case 6:
 			// Move down to drop bin
 			VertSpeed = c_VertMotorSpeedDn;
 			HorSpeed = 0.0;
+			if (VertPos >= 0)
+				m_ArmState = ARM_FINISHING;
 			if (VertPos > c_VertPos4)
+			{
+				m_ArmState = ARM_FINISHING;
 				m_Index++;
+			}
 			break;
 		case 7:
 			// Move horizontal in
 			VertSpeed = 0.0;
 			HorSpeed = c_HorzMotorSpeedIn;
 			if (HorPos > c_HorPos3)
+				m_Index++;
+			break;
+		case 8:
+			// Move up to 0
+			VertSpeed = c_VertMotorSpeedUp;
+			HorSpeed = 0.0;
+			if (VertPos <= c_HomeVertPos)
 			{
-				m_ArmState = ARM_IDLE;
 				m_Index = 0;
+				m_ArmState = ARM_IDLE;
 			}
 			break;
+
 	}
 
 	m_pHorizontalMotor->Set(HorSpeed, 0);

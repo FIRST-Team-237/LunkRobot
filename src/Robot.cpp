@@ -26,7 +26,7 @@ private:
 		lw = LiveWindow::GetInstance();
 		m_pStickL = new Joystick(0);
 		m_pStickR = new Joystick(1);
-		m_pStickC = new Joystick(3);
+		m_pStickC = new Joystick(2);
 		m_pDrive = new CTankDrive(0, 1, 2, 3, m_pStickL, m_pStickR);
 		m_pArmControl = new ArmControl(1 , 2);
 		m_pDrive->SetupEncoders(0,1,2,3);
@@ -44,12 +44,14 @@ private:
 	{
 		m_pDrive->ZeroNavXYaw();
 		m_pDrive->ResetEncoders();
+		m_pArmControl->ResetTalons(1,2);
+		m_pArmControl->GrabBin();
 	}
 
 
 	void TeleopInit()
 	{
-
+		m_pArmControl->m_ArmState = ArmControl::ARM_IDLE;
 	}
 
 
@@ -59,6 +61,11 @@ private:
 	void AutonomousPeriodic()
 	{
 		CAutonomous::RunAuto();
+		m_pDrive->GetPositions(&m_LeftPos, &m_RightPos);
+		SmartDashboard::PutNumber("IMU_Yaw", m_pDrive->GetNavXYaw());
+		SmartDashboard::PutNumber( "Left", m_LeftPos);
+		SmartDashboard::PutNumber( "Right", m_RightPos);
+
 	}
 
 
@@ -82,26 +89,24 @@ private:
 		else
 			m_pArmControl->m_ArmState = ArmControl::ARM_IDLE;
 
-		if (m_pStickL->GetRawButton(8))
-		{
-			m_pArmControl->GrabBin();
-		}
-		if (m_pStickL->GetRawButton(9))
+		//if (m_pStickL->GetRawButton(8))
+		//{
+		//	m_pArmControl->GrabBin();
+		//}
+		//if (m_pStickL->GetRawButton(9))
 			m_pArmControl->HandleStates();
-		else
-		{
-			m_pArmControl->m_pHorizontalMotor->Set(0, 0);
-			m_pArmControl->m_pVerticalMotor->Set(0, 0);
-		}
+		//else
+		//{
+		//	m_pArmControl->m_pHorizontalMotor->Set(0, 0);
+		//	m_pArmControl->m_pVerticalMotor->Set(0, 0);
+		//}
 
-		if (m_pStickC->GetRawButton(8))
-		{
-			m_pLiftControl->GrabTote(m_pStickC->GetRawButton(4));
-			m_pLiftControl->ReleaseTote(m_pStickC->GetRawButton(5));
+			m_pLiftControl->MoveDown(m_pStickC->GetRawButton(10));
+			m_pLiftControl->MoveUp(m_pStickC->GetRawButton(11));
+			//m_pLiftControl->GrabTote(m_pStickC->GetRawButton(4));
+			//m_pLiftControl->ReleaseTote(m_pStickC->GetRawButton(5));
 			m_pLiftControl->PullInTote(m_pStickC->GetRawButton(1));
 			m_pLiftControl->PushOutTote(m_pStickC->GetRawButton(2));
-
-		}
 		// Get/display drive encoder values
 					//m_pDrive->GetPositions(&m_LeftPos, &m_RightPos);
 					//SmartDashboard::PutNumber( "Left", m_LeftPos);
@@ -122,8 +127,11 @@ private:
 					SmartDashboard::PutNumber("Voltage", m_pdp.GetVoltage());
 					SmartDashboard::PutNumber("Temperature", m_pdp.GetTemperature());
 			*/
+		m_pDrive->GetPositions(&m_LeftPos, &m_RightPos);
 		SmartDashboard::PutNumber("Arm Horizontal Encoder",m_pArmControl->GetEncHorz());
 		SmartDashboard::PutNumber("Arm Vertical Encoder",m_pArmControl->GetEncVert());
+		SmartDashboard::PutNumber( "Left", m_LeftPos);
+		SmartDashboard::PutNumber( "Right", m_RightPos);
 
 	}
 

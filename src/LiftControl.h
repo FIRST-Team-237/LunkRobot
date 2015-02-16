@@ -13,13 +13,13 @@ const int c_maxEncVal = 0;
 const int c_minEncVal = 0;
 const int c_midEncVal = 0;
 
-const int c_elevSpeed = 0;
-const int c_negElevSpeed = 0;
+const float c_elevSpeed = -1.0;
+const float c_negElevSpeed = 1.0;
 
-const int c_suckSpeed = 0;
-const int c_spitOutSpeed = 0;
-const int c_grabSpeed = 0;
-const int c_releaseSpeed = 0;
+const float c_suckSpeed = -1.00;
+const float c_spitOutSpeed = 1.00;
+const float c_grabSpeed = 0;
+const float c_releaseSpeed = 0;
 
 const int c_deadZone = 10;
 class LiftControl {
@@ -29,8 +29,9 @@ public:
 	typedef enum State
 	{
 		ELEV_IDLE,
-		ELEV_MOVING,
-		ELEV_MANUAL
+		ELEV_MOVING_UP,
+		ELEV_MOVING_DOWN,
+		ELEV_MOVING
 	} ElevState;
 	typedef enum GraberState
 	{
@@ -39,7 +40,8 @@ public:
 	} GrabState;
 	typedef enum IntkState
 	{
-		INTAKE_MOVING,
+		INTAKE_OUT,
+		INTAKE_IN,
 		INTAKE_IDLE,
 	} IntakeState;
 	typedef enum ELEVPOS

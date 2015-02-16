@@ -49,40 +49,40 @@ void LiftControl::SetElevPosition(ElevPosition state)
 
 void LiftControl::MoveUp(bool moving)
 {
-	if (m_CurrentState == ELEV_MOVING){
-
-	} else {
+	if (m_CurrentState == ELEV_IDLE || m_CurrentState == ELEV_MOVING_UP ){
 		if (moving == true){
-			m_CurrentState = ELEV_MANUAL;
-			m_pElevOne->SetSpeed(c_elevSpeed);
-			m_pElevTwo->SetSpeed(c_elevSpeed);
+					m_CurrentState = ELEV_MOVING_UP;
+					m_pElevOne->SetSpeed(c_elevSpeed);
+					m_pElevTwo->SetSpeed(c_elevSpeed);
 
-		} else {
-			m_pElevOne->SetSpeed(0);
-			m_pElevTwo->SetSpeed(0);
+				} else {
+					m_pElevOne->SetSpeed(0);
+					m_pElevTwo->SetSpeed(0);
 
-			m_CurrentState = ELEV_IDLE;
-		}
+					m_CurrentState = ELEV_IDLE;
+				}
+	} else {
+
 	}
 
 }
 
 void LiftControl::MoveDown(bool moving)
 {
-	if (m_CurrentState == ELEV_MOVING){
-
-	} else {
+	if (m_CurrentState == ELEV_IDLE || m_CurrentState == ELEV_MOVING_DOWN){
 		if (moving == true){
-			m_CurrentState = ELEV_MANUAL;
-			m_pElevOne->SetSpeed(c_negElevSpeed);
-			m_pElevTwo->SetSpeed(c_negElevSpeed);
+					m_CurrentState = ELEV_MOVING_DOWN;
+					m_pElevOne->SetSpeed(c_negElevSpeed);
+					m_pElevTwo->SetSpeed(c_negElevSpeed);
 
-		} else {
-			m_pElevOne->SetSpeed(0);
-			m_pElevTwo->SetSpeed(0);
+				} else {
+					m_pElevOne->SetSpeed(0);
+					m_pElevTwo->SetSpeed(0);
 
 			m_CurrentState = ELEV_IDLE;
 		}
+	} else {
+
 	}
 }
 void LiftControl::GrabTote(bool grabing)
@@ -115,28 +115,35 @@ void LiftControl::ReleaseTote(bool release)
 }
 void LiftControl::PullInTote(bool moving)
 {
-	if (m_IntakeState == INTAKE_IDLE){
-		m_IntakeState = INTAKE_MOVING;
-		if (moving == true){
-			m_pIntake->SetSpeed(c_suckSpeed);
-		} else {
-			m_pIntake->SetSpeed(0);
-			m_IntakeState = INTAKE_IDLE;
-		}
-	} else {
+	//if (m_IntakeState == INTAKE_IDLE){
+		//m_IntakeState = INTAKE_MOVING;
+		//if (moving == true)
+		//	m_pIntake->Set(c_suckSpeed);
+		//else
+		//	m_pIntake->Set(0);
+			//m_IntakeState = INTAKE_IDLE;
+		//}
+	//} else {
 
-	}
+	//}
+	if (m_IntakeState == INTAKE_IDLE && moving == true) {
+			m_IntakeState = INTAKE_IN;
+			m_pIntake->Set(c_suckSpeed);
+		} else if (m_IntakeState == INTAKE_IN && moving == false) {
+			m_pIntake->Set(0);
+			m_IntakeState = INTAKE_IDLE;
+		} else {
+
+		}
 }
 void LiftControl::PushOutTote(bool moving)
 {
-	if (m_IntakeState == INTAKE_IDLE) {
-		m_IntakeState = INTAKE_MOVING;
-		if (moving == true){
-			m_pIntake->SetSpeed(c_spitOutSpeed);
-		} else {
-			m_pIntake->SetSpeed(0);
-			m_IntakeState = INTAKE_IDLE;
-		}
+	if (m_IntakeState == INTAKE_IDLE && moving == true) {
+		m_IntakeState = INTAKE_OUT;
+		m_pIntake->Set(c_spitOutSpeed);
+	} else if (m_IntakeState == INTAKE_OUT && moving == false) {
+		m_pIntake->Set(0);
+		m_IntakeState = INTAKE_IDLE;
 	} else {
 
 	}
