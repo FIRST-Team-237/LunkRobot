@@ -127,7 +127,7 @@ ArmControl::ArmState ArmControl::HandleStates()
 			break;
 		case 2:
 			// Move arm out to bin
-			HorSpeed = c_HorzMotorSpeedOut/2;
+			HorSpeed = c_HorzMotorSpeedOut * 0.75;
 			if (HorPos < c_HorPos1)
 				m_Index++;
 			break;
