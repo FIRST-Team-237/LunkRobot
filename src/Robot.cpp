@@ -65,7 +65,8 @@ private:
 		SmartDashboard::PutNumber("IMU_Yaw", m_pDrive->GetNavXYaw());
 		SmartDashboard::PutNumber( "Left", m_LeftPos);
 		SmartDashboard::PutNumber( "Right", m_RightPos);
-
+		SmartDashboard::PutNumber("Arm Horizontal Encoder",m_pArmControl->GetEncHorz());
+		SmartDashboard::PutNumber("Arm Vertical Encoder",m_pArmControl->GetEncVert());
 	}
 
 

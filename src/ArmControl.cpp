@@ -147,8 +147,10 @@ ArmControl::ArmState ArmControl::HandleStates()
 			break;
 		case 5:
 			// Move down and continue back
-			VertSpeed = c_VertMotorSpeedDn;
+			VertSpeed = 0.0; //c_VertMotorSpeedDn;
 			HorSpeed = c_HorzMotorSpeedIn;
+			if (HorPos > c_HorPos12)
+				VertPos = c_VertMotorSpeedDn;
 			if (VertPos > c_VertPos3)
 			{
 				VertSpeed = 0.0;
@@ -161,7 +163,7 @@ ArmControl::ArmState ArmControl::HandleStates()
 			}
 			if (HorDone == true && VertDone == true)
 			{
-				//m_ArmState = ARM_FINISHING;
+				m_ArmState = ARM_FINISHING;
 				m_Index++;
 			}
 			break;
@@ -170,12 +172,15 @@ ArmControl::ArmState ArmControl::HandleStates()
 			VertSpeed = c_VertMotorSpeedDn;
 			HorSpeed = 0.0;
 			if (VertPos >= 0)
-				m_ArmState = ARM_FINISHING;
-			if (VertPos > c_VertPos4)
 			{
 				m_ArmState = ARM_FINISHING;
 				m_Index++;
 			}
+			//if (VertPos > c_VertPos4)
+			//{
+			//	m_ArmState = ARM_FINISHING;
+			//	m_Index++;
+			//}
 			break;
 		case 7:
 			// Move horizontal in

@@ -19,12 +19,13 @@ const int c_HorPos2 = -500;//-2000;
 const int c_HorPos3 = -500;
 
 const int c_HorPos11 = -5000;
+const int c_HorPos12 = -5000;
 
 const int c_HomeVertPos = 350;
 const int c_VertPos1 = -2000;
-const int c_VertPos2 = -2900;
+const int c_VertPos2 = -2000;
 const int c_VertPos3 = -2000;
-const int c_VertPos4 = 1500;
+const int c_VertPos4 = 1000;
 
 const int c_VertPos11 = 500;
 
