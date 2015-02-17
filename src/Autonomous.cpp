@@ -10,6 +10,8 @@
 CTankDrive *CAutonomous::m_pDrive = NULL;
 ArmControl *CAutonomous::m_pArm = NULL;
 IMU *CAutonomous::m_pNavX = NULL;
+int CAutonomous::m_AutoMode = 0;
+
 const double DriveSpeed = 0.98;
 const float m_adjustDegree = 0.950;
 
@@ -19,6 +21,16 @@ void CAutonomous::Setup(CTankDrive *pDrive, ArmControl *pArm)
 	m_pArm = pArm;
 }
 
+
+void CAutonomous::SetMode(int Mode)
+{
+	m_AutoMode = Mode;
+}
+
+int CAutonomous::GetMode()
+{
+	return m_AutoMode;
+}
 
 void CAutonomous::RunAuto()
 {
@@ -49,9 +61,9 @@ void CAutonomous::RunAuto()
 	case 3:
 	case 5:
 		if (Index == 3)
-			Distance = 7750; //8250;
+			Distance = 8250; //8250;
 		else
-			Distance = 5000; //5250;
+			Distance = 5250; //5250;
 		// Get info from sensors
 		Yaw = m_pDrive->GetNavXYaw() + m_adjustDegree;
 		m_pDrive->GetPositions(&LeftPos, &RightPos);

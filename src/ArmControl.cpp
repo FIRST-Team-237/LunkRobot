@@ -13,6 +13,13 @@ ArmControl::ArmControl(int horzontalTalonOne, int verticalCANTalon) {
 	m_pVerticalMotor = new CANTalon(verticalCANTalon);
 	m_pHorizontalMotor->SetSensorDirection(true);
 	m_pVerticalMotor->SetSensorDirection(false);
+	m_pVerticalMotor->ConfigFwdLimitSwitchNormallyOpen(true);
+	m_pVerticalMotor->ConfigRevLimitSwitchNormallyOpen(true);
+	//m_pVerticalMotor->ConfigSoftPositionLimits(1300, -2800);
+	m_pHorizontalMotor->SetExpiration(2.0);
+	m_pVerticalMotor->SetExpiration(2.0);
+	m_pHorizontalMotor->SetSafetyEnabled(true);
+	m_pVerticalMotor->SetSafetyEnabled(true);
 	m_ArmState = ARM_IDLE;
 	m_Index = 0;
 }
@@ -126,6 +133,8 @@ ArmControl::ArmState ArmControl::HandleStates()
 				m_Index++;
 			break;
 		case 2:
+			if (HorPos <= c_HorPos13)
+				VertSpeed = c_VertMotorSpeedUp;
 			// Move arm out to bin
 			HorSpeed = c_HorzMotorSpeedOut * 0.75;
 			if (HorPos < c_HorPos1)
@@ -171,7 +180,7 @@ ArmControl::ArmState ArmControl::HandleStates()
 			// Move down to drop bin
 			VertSpeed = c_VertMotorSpeedDn;
 			HorSpeed = 0.0;
-			if (VertPos >= 0)
+			if (VertPos >= 100)
 			{
 				m_ArmState = ARM_FINISHING;
 				m_Index++;

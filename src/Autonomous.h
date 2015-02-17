@@ -18,6 +18,8 @@ class CAutonomous
 public:
 	static void RunAuto();
 	static void Setup(CTankDrive *pDrive, ArmControl *pArm);
+	static void SetMode(int Mode);
+	static int GetMode();
 
 private:
 	CAutonomous();
@@ -27,7 +29,7 @@ private:
 	static CTankDrive *m_pDrive;
 	static ArmControl *m_pArm;
 	static IMU *m_pNavX;
-
+	static int m_AutoMode;
 };
 
 

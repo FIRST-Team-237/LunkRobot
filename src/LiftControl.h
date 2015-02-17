@@ -7,7 +7,7 @@
 
 #ifndef SRC_LIFTCONTROL_H_
 #define SRC_LIFTCONTROL_H_
-#import "WPILib.h"
+#include "WPILib.h"
 
 const int c_maxEncVal = 0;
 const int c_minEncVal = 0;
@@ -20,6 +20,9 @@ const float c_suckSpeed = -1.00;
 const float c_spitOutSpeed = 1.00;
 const float c_grabSpeed = 0;
 const float c_releaseSpeed = 0;
+
+const int c_MaxStopLimit = 100000;
+const int c_MinStopLimit = -100000;
 
 const int c_deadZone = 10;
 class LiftControl {

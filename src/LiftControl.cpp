@@ -50,7 +50,7 @@ void LiftControl::SetElevPosition(ElevPosition state)
 void LiftControl::MoveUp(bool moving)
 {
 	if (m_CurrentState == ELEV_IDLE || m_CurrentState == ELEV_MOVING_UP ){
-		if (moving == true){
+		if (moving == true && m_pElevEnc <  c_MaxStopLimit){
 					m_CurrentState = ELEV_MOVING_UP;
 					m_pElevOne->SetSpeed(c_elevSpeed);
 					m_pElevTwo->SetSpeed(c_elevSpeed);
@@ -70,7 +70,7 @@ void LiftControl::MoveUp(bool moving)
 void LiftControl::MoveDown(bool moving)
 {
 	if (m_CurrentState == ELEV_IDLE || m_CurrentState == ELEV_MOVING_DOWN){
-		if (moving == true){
+		if (moving == true && m_pElevEnc >  c_MinStopLimit ){
 					m_CurrentState = ELEV_MOVING_DOWN;
 					m_pElevOne->SetSpeed(c_negElevSpeed);
 					m_pElevTwo->SetSpeed(c_negElevSpeed);

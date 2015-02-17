@@ -18,11 +18,13 @@ private:
 	bool m_firstIteration;
 	PowerDistributionPanel m_pdp;
 	INT32 m_LeftPos, m_RightPos;
-
-
+	DriverStation *pDS;
+	bool m_PrevButState;
 
 	void RobotInit()
 	{
+		m_PrevButState = false;
+		pDS = DriverStation::GetInstance();
 		lw = LiveWindow::GetInstance();
 		m_pStickL = new Joystick(0);
 		m_pStickR = new Joystick(1);
@@ -33,7 +35,6 @@ private:
 		m_pLiftControl = new LiftControl(4, 5, 6, 7);
 		//m_pDrive->WatchdogOff();
 		m_pDrive->WatchdogOn(2.0);
-		//m_pArmControl->SetUpEncoders(4,5);
 		m_firstIteration = true;
 		CAutonomous::Setup(m_pDrive, m_pArmControl);
 		m_pDrive->initNavX();
@@ -45,7 +46,8 @@ private:
 		m_pDrive->ZeroNavXYaw();
 		m_pDrive->ResetEncoders();
 		m_pArmControl->ResetTalons(1,2);
-		m_pArmControl->GrabBin();
+		if (CAutonomous::GetMode() == 0)
+			m_pArmControl->GrabBin();
 	}
 
 
@@ -102,38 +104,16 @@ private:
 		//	m_pArmControl->m_pVerticalMotor->Set(0, 0);
 		//}
 
-			m_pLiftControl->MoveDown(m_pStickC->GetRawButton(10));
-			m_pLiftControl->MoveUp(m_pStickC->GetRawButton(11));
-			//m_pLiftControl->GrabTote(m_pStickC->GetRawButton(4));
-			//m_pLiftControl->ReleaseTote(m_pStickC->GetRawButton(5));
-			m_pLiftControl->PullInTote(m_pStickC->GetRawButton(1));
-			m_pLiftControl->PushOutTote(m_pStickC->GetRawButton(2));
-		// Get/display drive encoder values
-					//m_pDrive->GetPositions(&m_LeftPos, &m_RightPos);
-					//SmartDashboard::PutNumber( "Left", m_LeftPos);
-					//SmartDashboard::PutNumber( "Right", m_RightPos);
+		m_pLiftControl->MoveDown(m_pStickC->GetRawButton(1));
+		m_pLiftControl->MoveUp(m_pStickC->GetRawButton(2));
+		m_pLiftControl->PullInTote(m_pStickR->GetRawButton(1));
+		m_pLiftControl->PushOutTote(m_pStickR->GetRawButton(2));
 
-					// Get/display navX info
-					/*SmartDashboard::PutBoolean( "IMU_Connected", m_pDrive.IsNavXConnected());
-					SmartDashboard::PutNumber("IMU_Yaw", m_pDrive.GetNavXYaw());
-					SmartDashboard::PutNumber("IMU_Pitch", m_pDrive.GetNavXPitch());
-					SmartDashboard::PutNumber("IMU_Roll", m_pDrive.GetNavXRoll());
-					SmartDashboard::PutNumber("IMU_CompassHeading", m_pDrive.GetNavXCompassHeading());
-					SmartDashboard::PutNumber("IMU_Update_Count", m_pDrive.GetNavXUpdateCount());
-					SmartDashboard::PutNumber("IMU_Byte_Count", m_pDrive.GetNavXByteCount());
-					SmartDashboard::PutBoolean("IMU_IsCalibrating", m_pDrive.IsNavXCalibrating());
-
-					// Get/display info from Power Distribution Panel
-					SmartDashboard::PutNumber("Current Channel 1", m_pdp.GetCurrent(1));
-					SmartDashboard::PutNumber("Voltage", m_pdp.GetVoltage());
-					SmartDashboard::PutNumber("Temperature", m_pdp.GetTemperature());
-			*/
 		m_pDrive->GetPositions(&m_LeftPos, &m_RightPos);
 		SmartDashboard::PutNumber("Arm Horizontal Encoder",m_pArmControl->GetEncHorz());
 		SmartDashboard::PutNumber("Arm Vertical Encoder",m_pArmControl->GetEncVert());
 		SmartDashboard::PutNumber( "Left", m_LeftPos);
 		SmartDashboard::PutNumber( "Right", m_RightPos);
-
 	}
 
 
@@ -145,6 +125,27 @@ private:
 
 	void DisabledPeriodic()
 	{
+		bool CurButState = m_pStickR->GetRawButton(1);
+
+		if (CurButState && m_PrevButState == false)
+		{
+			m_PrevButState = true;
+			if (CAutonomous::GetMode() == 0)
+			{
+				CAutonomous::SetMode(1);
+				pDS->ReportError("Skip first bin");
+			}
+			else
+			{
+				CAutonomous::SetMode(0);
+				pDS->ReportError("Grab all bins");
+			}
+		}
+		else if (CurButState == true)
+			m_PrevButState = true;
+		else
+			m_PrevButState = false;
+
 		// Get/display drive encoders
 		m_pDrive->GetPositions(&m_LeftPos, &m_RightPos);
 		SmartDashboard::PutNumber( "Left", m_LeftPos);
