@@ -13,8 +13,10 @@ const int c_maxEncVal = 0;
 const int c_minEncVal = 0;
 const int c_midEncVal = 0;
 
-const float c_elevSpeed = -1.0;
-const float c_negElevSpeed = 1.0;
+const float c_elevSpeed = -0.60; // UP
+const float c_negElevSpeed = 1.00; //DOWN
+const float c_ditherSpeed = -0.8;
+const int c_HalfWindowSize = 100;
 
 const float c_suckSpeed = -1.00;
 const float c_spitOutSpeed = 1.00;
@@ -67,6 +69,11 @@ public:
 	int GetEncCount();
 	void ResetEnc();
 	void SetUpEncoder(int channelA, int channelB);
+	void EnableDither();
+	void DitherElev();
+	void DisableDither();
+	int GetDitherTarget();
+	bool GetDitherEnabled();
 private:
 	// Motors for elevator
 	Talon *m_pElevOne;
@@ -79,6 +86,9 @@ private:
 	ElevState m_CurrentState;
 	GrabState m_GraberState;
 	IntakeState m_IntakeState;
+	bool m_EnableDither;
+	int m_DitherTarget;
+
 };
 
 #endif /* SRC_LIFTCONTROL_H_ */

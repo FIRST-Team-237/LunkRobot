@@ -16,6 +16,7 @@ LiftControl::LiftControl(int elevOne, int elevTwo, int intake, int binGraber) {
 	m_IntakeState = INTAKE_IDLE;
 	m_GraberState = GRAB_IDLE;
 	m_CurrentState = ELEV_IDLE;
+	m_EnableDither = false;
 }
 
 LiftControl::~LiftControl() {
@@ -49,18 +50,19 @@ void LiftControl::SetElevPosition(ElevPosition state)
 
 void LiftControl::MoveUp(bool moving)
 {
+
 	if (m_CurrentState == ELEV_IDLE || m_CurrentState == ELEV_MOVING_UP ){
-		if (moving == true && m_pElevEnc <  c_MaxStopLimit){
-					m_CurrentState = ELEV_MOVING_UP;
-					m_pElevOne->SetSpeed(c_elevSpeed);
-					m_pElevTwo->SetSpeed(c_elevSpeed);
+		if (moving == true && m_pElevEnc->Get() <  c_MaxStopLimit){
+				DisableDither();
+				m_CurrentState = ELEV_MOVING_UP;
+				m_pElevOne->SetSpeed(c_elevSpeed);
+				m_pElevTwo->SetSpeed(c_elevSpeed);
 
-				} else {
-					m_pElevOne->SetSpeed(0);
-					m_pElevTwo->SetSpeed(0);
-
-					m_CurrentState = ELEV_IDLE;
-				}
+			} else {
+				m_pElevOne->SetSpeed(0);
+				m_pElevTwo->SetSpeed(0);
+				m_CurrentState = ELEV_IDLE;
+			}
 	} else {
 
 	}
@@ -69,16 +71,17 @@ void LiftControl::MoveUp(bool moving)
 
 void LiftControl::MoveDown(bool moving)
 {
+
 	if (m_CurrentState == ELEV_IDLE || m_CurrentState == ELEV_MOVING_DOWN){
-		if (moving == true && m_pElevEnc >  c_MinStopLimit ){
-					m_CurrentState = ELEV_MOVING_DOWN;
-					m_pElevOne->SetSpeed(c_negElevSpeed);
-					m_pElevTwo->SetSpeed(c_negElevSpeed);
+		if (moving == true && m_pElevEnc->Get() >  c_MinStopLimit ){
+			DisableDither();
+			m_CurrentState = ELEV_MOVING_DOWN;
+			m_pElevOne->SetSpeed(c_negElevSpeed);
+			m_pElevTwo->SetSpeed(c_negElevSpeed);
 
-				} else {
-					m_pElevOne->SetSpeed(0);
-					m_pElevTwo->SetSpeed(0);
-
+		} else {
+			m_pElevOne->SetSpeed(0);
+			m_pElevTwo->SetSpeed(0);
 			m_CurrentState = ELEV_IDLE;
 		}
 	} else {
@@ -148,7 +151,40 @@ void LiftControl::PushOutTote(bool moving)
 
 	}
 }
+void LiftControl::EnableDither(){
 
+	if (false == m_EnableDither ){
+		m_DitherTarget = m_pElevEnc->GetRaw();
+		m_EnableDither = true;
+	} else {
+		m_EnableDither = true;
+	}
+}
+void LiftControl::DisableDither()
+{
+	m_EnableDither = false;
+}
+void LiftControl::DitherElev()
+{
+	if (true == m_EnableDither)
+	{
+		if ((m_pElevEnc->GetRaw() < (m_DitherTarget- c_HalfWindowSize))  ){
+			m_pElevOne->SetSpeed(c_ditherSpeed);
+			m_pElevTwo->SetSpeed(c_ditherSpeed);
+		} else {
+			m_pElevOne->SetSpeed(0);
+			m_pElevTwo->SetSpeed(0);
+		}
+	}
+}
+int LiftControl::GetDitherTarget()
+{
+	return m_DitherTarget;
+}
+bool LiftControl::GetDitherEnabled()
+{
+	return m_EnableDither;
+}
 void LiftControl::HandleStates()
 {
 	if (m_CurrentState != ELEV_IDLE) {

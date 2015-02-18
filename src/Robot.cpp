@@ -4,6 +4,7 @@
 #include "Autonomous.h"
 #include "ArmControl.h"
 #include "LiftControl.h"
+#include "XBoxController.h"
 
 class Robot: public IterativeRobot
 {
@@ -12,7 +13,7 @@ private:
 	CTankDrive *m_pDrive; // Drive system
 	Joystick *m_pStickL;
 	Joystick *m_pStickR;
-	Joystick *m_pStickC;
+	CXBoxController *m_pStickC;
 	ArmControl *m_pArmControl;
 	LiftControl *m_pLiftControl;
 	bool m_firstIteration;
@@ -28,11 +29,12 @@ private:
 		lw = LiveWindow::GetInstance();
 		m_pStickL = new Joystick(0);
 		m_pStickR = new Joystick(1);
-		m_pStickC = new Joystick(2);
+		m_pStickC = new CXBoxController(2);
 		m_pDrive = new CTankDrive(0, 1, 2, 3, m_pStickL, m_pStickR);
 		m_pArmControl = new ArmControl(1 , 2);
 		m_pDrive->SetupEncoders(0,1,2,3);
 		m_pLiftControl = new LiftControl(4, 5, 6, 7);
+		m_pLiftControl->SetUpEncoder(4, 5);
 		//m_pDrive->WatchdogOff();
 		m_pDrive->WatchdogOn(2.0);
 		m_firstIteration = true;
@@ -74,46 +76,59 @@ private:
 
 	void TeleopPeriodic()
 	{
+		// Drivetrain
 		m_pDrive->Go();
 
-
+		// Reset encoders ---remove for competition
 		if (true == m_pStickL->GetRawButton(6)){
 			m_pArmControl->ResetTalons(1,2);
 		}
 
-		if (m_pStickL->GetRawButton(2))
-			m_pArmControl->TestControlVert(ArmControl::VERT_UP);
-		else if (m_pStickL->GetRawButton(3))
-			m_pArmControl->TestControlVert(ArmControl::VERT_DN);
-		else if (m_pStickL->GetRawButton(4))
-			m_pArmControl->TestControlHorz(ArmControl::HOR_IN);
-		else if (m_pStickL->GetRawButton(5))
-			m_pArmControl->TestControlHorz(ArmControl::HOR_OUT);
+		// Recycle bin grabber (rake)
+		if (m_pStickC->GetLeftTrigger() && m_pStickC->GetRightTrigger())
+		{
+			if (m_pStickC->GetY())
+				m_pArmControl->TestControlVert(ArmControl::VERT_UP);
+			else if (m_pStickC->GetA())
+				m_pArmControl->TestControlVert(ArmControl::VERT_DN);
+			else if (m_pStickC->GetX())
+				m_pArmControl->TestControlHorz(ArmControl::HOR_IN);
+			else if (m_pStickC->GetB())
+				m_pArmControl->TestControlHorz(ArmControl::HOR_OUT);
+			else
+				m_pArmControl->m_ArmState = ArmControl::ARM_IDLE;
+		}
 		else
 			m_pArmControl->m_ArmState = ArmControl::ARM_IDLE;
+		m_pArmControl->HandleStates();
 
-		//if (m_pStickL->GetRawButton(8))
-		//{
-		//	m_pArmControl->GrabBin();
-		//}
-		//if (m_pStickL->GetRawButton(9))
-			m_pArmControl->HandleStates();
-		//else
-		//{
-		//	m_pArmControl->m_pHorizontalMotor->Set(0, 0);
-		//	m_pArmControl->m_pVerticalMotor->Set(0, 0);
-		//}
+		// Elevator control
+		m_pLiftControl->MoveDown(m_pStickC->GetLeftYDownasButton());
+		m_pLiftControl->MoveUp(m_pStickC->GetLeftYUpasButton());
+		bool test = m_pStickC->GetLeftBumper();
+		if (test == true) {
+			m_pLiftControl->EnableDither();
+		}
+		if (m_pStickC->GetRightBumper()) {
+			m_pLiftControl->DisableDither();
+		}
+		m_pLiftControl->DitherElev();
 
-		m_pLiftControl->MoveDown(m_pStickC->GetRawButton(1));
-		m_pLiftControl->MoveUp(m_pStickC->GetRawButton(2));
-		m_pLiftControl->PullInTote(m_pStickR->GetRawButton(1));
-		m_pLiftControl->PushOutTote(m_pStickR->GetRawButton(2));
+		// Intake control
+		m_pLiftControl->PullInTote(m_pStickR->GetRawButton(1) | m_pStickL->GetRawButton(1));
+		m_pLiftControl->PushOutTote(m_pStickR->GetRawButton(2) | m_pStickL->GetRawButton(2));
 
+		// Driver feedback
 		m_pDrive->GetPositions(&m_LeftPos, &m_RightPos);
 		SmartDashboard::PutNumber("Arm Horizontal Encoder",m_pArmControl->GetEncHorz());
 		SmartDashboard::PutNumber("Arm Vertical Encoder",m_pArmControl->GetEncVert());
 		SmartDashboard::PutNumber( "Left", m_LeftPos);
 		SmartDashboard::PutNumber( "Right", m_RightPos);
+		SmartDashboard::PutNumber("Elevator", m_pLiftControl->GetEncCount());
+		SmartDashboard::PutNumber("Elev 1",m_pdp.GetCurrent(2));
+		SmartDashboard::PutNumber("Elev 2",m_pdp.GetCurrent(13));
+		SmartDashboard::PutNumber("Dither Target",m_pLiftControl->GetDitherTarget());
+		SmartDashboard::PutBoolean("Dither Enable",m_pLiftControl->GetDitherEnabled());
 	}
 
 
@@ -127,6 +142,7 @@ private:
 	{
 		bool CurButState = m_pStickR->GetRawButton(1);
 
+		// Autonomous selection
 		if (CurButState && m_PrevButState == false)
 		{
 			m_PrevButState = true;
@@ -146,6 +162,7 @@ private:
 		else
 			m_PrevButState = false;
 
+
 		// Get/display drive encoders
 		m_pDrive->GetPositions(&m_LeftPos, &m_RightPos);
 		SmartDashboard::PutNumber( "Left", m_LeftPos);
@@ -154,6 +171,8 @@ private:
 		// Get/display navX info
 		SmartDashboard::PutBoolean( "IMU_Connected", m_pDrive->IsNavXConnected());
 		SmartDashboard::PutNumber("IMU_Yaw", m_pDrive->GetNavXYaw());
+
+		SmartDashboard::PutNumber("Elevator", m_pLiftControl->GetEncCount());
 	}
 
 
