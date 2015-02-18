@@ -25,7 +25,7 @@ const int c_HomeVertPos = 350;
 const int c_VertPos1 = -2000;
 const int c_VertPos2 = -2700;
 const int c_VertPos3 = -2000;
-const int c_VertPos4 = 1000;
+const int c_VertPos4 = 200;
 const int c_VertPos11 = 500;
 
 const float c_VertMotorSpeedUp = -1.00;

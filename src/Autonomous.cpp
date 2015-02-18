@@ -13,7 +13,7 @@ IMU *CAutonomous::m_pNavX = NULL;
 int CAutonomous::m_AutoMode = 0;
 
 const double DriveSpeed = 0.98;
-const float m_adjustDegree = 0.950;
+const float m_adjustDegree = 0.0;
 
 void CAutonomous::Setup(CTankDrive *pDrive, ArmControl *pArm)
 {
@@ -61,9 +61,9 @@ void CAutonomous::RunAuto()
 	case 3:
 	case 5:
 		if (Index == 3)
-			Distance = 8250; //8250;
+			Distance = 7750; //8250;
 		else
-			Distance = 5250; //5250;
+			Distance = 5000; //5250;
 		// Get info from sensors
 		Yaw = m_pDrive->GetNavXYaw() + m_adjustDegree;
 		m_pDrive->GetPositions(&LeftPos, &RightPos);
@@ -125,8 +125,9 @@ void CAutonomous::RunAuto()
 		break;
 	}
 
-
-	m_pDrive->SetMotorSpeeds(LSpeed, RSpeed);
+	if (LSpeed == 0)
+		LSpeed = 0.02;
+	m_pDrive->SetMotorSpeeds(LSpeed-0.02, RSpeed);
 
 	//SmartDashboard::PutNumber( "Left", LeftPos);
 	//SmartDashboard::PutNumber( "Right", RightPos);

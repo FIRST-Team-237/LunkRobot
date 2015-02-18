@@ -11,15 +11,15 @@ ArmControl::ArmControl(int horzontalTalonOne, int verticalCANTalon) {
 	// TODO Auto-generated constructor stub
 	m_pHorizontalMotor = new CANTalon(horzontalTalonOne);
 	m_pVerticalMotor = new CANTalon(verticalCANTalon);
-	m_pHorizontalMotor->SetSensorDirection(true);
-	m_pVerticalMotor->SetSensorDirection(false);
-	m_pVerticalMotor->ConfigFwdLimitSwitchNormallyOpen(true);
-	m_pVerticalMotor->ConfigRevLimitSwitchNormallyOpen(true);
+	//m_pHorizontalMotor->SetSensorDirection(true);
+	//m_pVerticalMotor->SetSensorDirection(false);
+	//m_pVerticalMotor->ConfigFwdLimitSwitchNormallyOpen(true);
+	//m_pVerticalMotor->ConfigRevLimitSwitchNormallyOpen(true);
 	//m_pVerticalMotor->ConfigSoftPositionLimits(1300, -2800);
 	m_pHorizontalMotor->SetExpiration(2.0);
 	m_pVerticalMotor->SetExpiration(2.0);
-	m_pHorizontalMotor->SetSafetyEnabled(true);
-	m_pVerticalMotor->SetSafetyEnabled(true);
+	m_pHorizontalMotor->SetSafetyEnabled(false);
+	m_pVerticalMotor->SetSafetyEnabled(false);
 	m_ArmState = ARM_IDLE;
 	m_Index = 0;
 }
@@ -159,7 +159,7 @@ ArmControl::ArmState ArmControl::HandleStates()
 			VertSpeed = 0.0; //c_VertMotorSpeedDn;
 			HorSpeed = c_HorzMotorSpeedIn;
 			if (HorPos > c_HorPos12)
-				VertPos = c_VertMotorSpeedDn;
+				VertSpeed = c_VertMotorSpeedDn;
 			if (VertPos > c_VertPos3)
 			{
 				VertSpeed = 0.0;
@@ -172,7 +172,7 @@ ArmControl::ArmState ArmControl::HandleStates()
 			}
 			if (HorDone == true && VertDone == true)
 			{
-				m_ArmState = ARM_FINISHING;
+				//m_ArmState = ARM_FINISHING;
 				m_Index++;
 			}
 			break;
@@ -180,16 +180,14 @@ ArmControl::ArmState ArmControl::HandleStates()
 			// Move down to drop bin
 			VertSpeed = c_VertMotorSpeedDn;
 			HorSpeed = 0.0;
-			if (VertPos >= 100)
+			if (VertPos > -100)
+				m_ArmState = ARM_FINISHING;
+
+			if (VertPos > c_VertPos4)
 			{
 				m_ArmState = ARM_FINISHING;
 				m_Index++;
 			}
-			//if (VertPos > c_VertPos4)
-			//{
-			//	m_ArmState = ARM_FINISHING;
-			//	m_Index++;
-			//}
 			break;
 		case 7:
 			// Move horizontal in
@@ -200,9 +198,9 @@ ArmControl::ArmState ArmControl::HandleStates()
 			break;
 		case 8:
 			// Move up to 0
-			VertSpeed = c_VertMotorSpeedUp;
+			VertSpeed = c_VertMotorSpeedDn;
 			HorSpeed = 0.0;
-			if (VertPos <= c_HomeVertPos)
+			if (VertPos >= c_HomeVertPos)
 			{
 				m_Index = 0;
 				m_ArmState = ARM_IDLE;

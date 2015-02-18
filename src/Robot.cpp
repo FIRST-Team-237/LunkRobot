@@ -125,8 +125,8 @@ private:
 		SmartDashboard::PutNumber( "Left", m_LeftPos);
 		SmartDashboard::PutNumber( "Right", m_RightPos);
 		SmartDashboard::PutNumber("Elevator", m_pLiftControl->GetEncCount());
-		SmartDashboard::PutNumber("Elev 1",m_pdp.GetCurrent(2));
-		SmartDashboard::PutNumber("Elev 2",m_pdp.GetCurrent(13));
+		//SmartDashboard::PutNumber("Elev 1",m_pdp.GetCurrent(2));
+		//SmartDashboard::PutNumber("Elev 2",m_pdp.GetCurrent(13));
 		SmartDashboard::PutNumber("Dither Target",m_pLiftControl->GetDitherTarget());
 		SmartDashboard::PutBoolean("Dither Enable",m_pLiftControl->GetDitherEnabled());
 	}
