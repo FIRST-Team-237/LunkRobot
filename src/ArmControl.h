@@ -82,6 +82,7 @@ public:
 	int GetEncHorz();
 	void GrabBin();
 	ArmState HandleStates();
+	void StopRake();
 
 private:
 	int m_Index;

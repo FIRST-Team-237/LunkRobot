@@ -61,9 +61,9 @@ void CAutonomous::RunAuto()
 	case 3:
 	case 5:
 		if (Index == 3)
-			Distance = 7750; //8250;
+			Distance = 7300; //8250;
 		else
-			Distance = 5000; //5250;
+			Distance = 4800; //5250;
 		// Get info from sensors
 		Yaw = m_pDrive->GetNavXYaw() + m_adjustDegree;
 		m_pDrive->GetPositions(&LeftPos, &RightPos);

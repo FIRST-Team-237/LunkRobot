@@ -147,7 +147,7 @@ float CXBoxController::GetLeftX()
 
 float CXBoxController::GetLeftY()
 {
-	return GetRawAxis(2);
+	return GetRawAxis(1);
 }
 
 

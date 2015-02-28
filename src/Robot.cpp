@@ -33,7 +33,7 @@ private:
 		m_pDrive = new CTankDrive(0, 1, 2, 3, m_pStickL, m_pStickR);
 		m_pArmControl = new ArmControl(1 , 2);
 		m_pDrive->SetupEncoders(0,1,2,3);
-		m_pLiftControl = new LiftControl(4, 5, 6, 7);
+		m_pLiftControl = new LiftControl(4, 5, 6, 7, 8);
 		m_pLiftControl->SetUpEncoder(4, 5);
 		//m_pDrive->WatchdogOff();
 		m_pDrive->WatchdogOn(2.0);
@@ -100,23 +100,44 @@ private:
 		}
 		else
 			m_pArmControl->m_ArmState = ArmControl::ARM_IDLE;
+
+		if (m_pStickC->GetDPadDown() || m_pStickC->GetDPadUp() || m_pStickC->GetDPadLeft() || m_pStickC->GetDPadRight())
+				m_pArmControl->StopRake();
 		m_pArmControl->HandleStates();
 
 		// Elevator control
-		m_pLiftControl->MoveDown(m_pStickC->GetLeftYDownasButton());
-		m_pLiftControl->MoveUp(m_pStickC->GetLeftYUpasButton());
-		bool test = m_pStickC->GetLeftBumper();
-		if (test == true) {
-			m_pLiftControl->EnableDither();
-		}
-		if (m_pStickC->GetRightBumper()) {
-			m_pLiftControl->DisableDither();
-		}
-		m_pLiftControl->DitherElev();
+		m_pLiftControl->MoveElevator(m_pStickC->GetLeftY());
+		//m_pLiftControl->MoveDown(m_pStickC->GetLeftYDownasButton());
+		//m_pLiftControl->MoveUp(m_pStickC->GetLeftYUpasButton());
+//		bool test = m_pStickC->GetLeftBumper();
+//		if (test == true) {
+//			m_pLiftControl->EnableDither();
+//		}
+//		if (m_pStickC->GetRightBumper()) {
+//			m_pLiftControl->DisableDither();
+//		}
+//		m_pLiftControl->DitherElev();
 
 		// Intake control
-		m_pLiftControl->PullInTote(m_pStickR->GetRawButton(1) | m_pStickL->GetRawButton(1));
-		m_pLiftControl->PushOutTote(m_pStickR->GetRawButton(2) | m_pStickL->GetRawButton(2));
+		if (m_pStickL->GetRawButton(1))
+			m_pLiftControl->SetLeftIntake(c_suckSpeed);
+		else if (m_pStickL->GetRawButton(2))
+			m_pLiftControl->SetLeftIntake(c_spitOutSpeed);
+		else
+			m_pLiftControl->SetLeftIntake(0.0);
+
+		if (m_pStickR->GetRawButton(1))
+			m_pLiftControl->SetRightIntake(c_suckSpeed);
+		else if (m_pStickR->GetRawButton(2))
+			m_pLiftControl->SetRightIntake(c_spitOutSpeed);
+		else
+			m_pLiftControl->SetRightIntake(0.0);
+
+		//m_pLiftControl->PullInTote(LiftControl::INTAKE_LEFT, m_pStickL->GetRawButton(1));
+		//m_pLiftControl->PullInTote(LiftControl::INTAKE_RIGHT, m_pStickR->GetRawButton(1));
+
+		//m_pLiftControl->PushOutTote(LiftControl::INTAKE_LEFT, m_pStickL->GetRawButton(2));
+		//m_pLiftControl->PushOutTote(LiftControl::INTAKE_RIGHT, m_pStickR->GetRawButton(2));
 
 		// Driver feedback
 		m_pDrive->GetPositions(&m_LeftPos, &m_RightPos);

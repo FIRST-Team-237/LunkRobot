@@ -7,12 +7,13 @@
 
 #include <LiftControl.h>
 
-LiftControl::LiftControl(int elevOne, int elevTwo, int intake, int binGraber) {
+LiftControl::LiftControl(int elevOne, int elevTwo, int intake, int binGraber, int intakeR) {
 	// TODO Auto-generated constructor stub
 	m_pElevOne = new Talon(elevOne);
 	m_pElevTwo = new Talon(elevTwo);
 	m_pIntake = new Talon(intake);
 	m_pBinGraber = new Talon(binGraber);
+	m_pIntakeR = new Talon(intakeR);
 	m_IntakeState = INTAKE_IDLE;
 	m_GraberState = GRAB_IDLE;
 	m_CurrentState = ELEV_IDLE;
@@ -47,6 +48,16 @@ void LiftControl::SetElevPosition(ElevPosition state)
 {
 	return m_CurrentState;
 }*/
+
+void LiftControl::MoveElevator(float speed)
+{
+//	if (speed > 0.75)
+//		speed = 0.75;
+//	if (speed < -0.75)
+//		speed = -0.75;
+	m_pElevOne->SetSpeed(speed);
+	m_pElevTwo->SetSpeed(speed);
+}
 
 void LiftControl::MoveUp(bool moving)
 {
@@ -116,30 +127,33 @@ void LiftControl::ReleaseTote(bool release)
 
 	}
 }
-void LiftControl::PullInTote(bool moving)
+void LiftControl::PullInTote(IntakeSide side, bool moving)
 {
-	//if (m_IntakeState == INTAKE_IDLE){
-		//m_IntakeState = INTAKE_MOVING;
-		//if (moving == true)
-		//	m_pIntake->Set(c_suckSpeed);
-		//else
-		//	m_pIntake->Set(0);
-			//m_IntakeState = INTAKE_IDLE;
-		//}
-	//} else {
-
-	//}
-	if (m_IntakeState == INTAKE_IDLE && moving == true) {
-			m_IntakeState = INTAKE_IN;
-			m_pIntake->Set(c_suckSpeed);
-		} else if (m_IntakeState == INTAKE_IN && moving == false) {
+	float speed;
+	if (m_IntakeState == INTAKE_IDLE && moving == true)
+	{
+		m_IntakeState = INTAKE_IN;
+		m_pIntake->Set(c_suckSpeed);
+	}
+	else if (m_IntakeState == INTAKE_IN && moving == false)
+	{
+		m_pIntake->Set(0);
+		m_IntakeState = INTAKE_IDLE;
+	}
+	else
+	{
+	}
+	switch (side)
+	{
+		case INTAKE_LEFT:
 			m_pIntake->Set(0);
-			m_IntakeState = INTAKE_IDLE;
-		} else {
+			break;
+		case INTAKE_RIGHT:
+			break;
+	}
 
-		}
 }
-void LiftControl::PushOutTote(bool moving)
+void LiftControl::PushOutTote(IntakeSide side, bool moving)
 {
 	if (m_IntakeState == INTAKE_IDLE && moving == true) {
 		m_IntakeState = INTAKE_OUT;
@@ -151,6 +165,19 @@ void LiftControl::PushOutTote(bool moving)
 
 	}
 }
+
+
+void LiftControl::SetLeftIntake(float speed)
+{
+	m_pIntake->Set(speed);
+}
+
+
+void LiftControl::SetRightIntake(float speed)
+{
+	m_pIntakeR->Set(speed);
+}
+
 void LiftControl::EnableDither(){
 
 	if (false == m_EnableDither ){

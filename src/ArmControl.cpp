@@ -180,12 +180,12 @@ ArmControl::ArmState ArmControl::HandleStates()
 			// Move down to drop bin
 			VertSpeed = c_VertMotorSpeedDn;
 			HorSpeed = 0.0;
-			if (VertPos > -100)
-				m_ArmState = ARM_FINISHING;
+			//if (VertPos > 0)
+			//	m_ArmState = ARM_FINISHING;
 
 			if (VertPos > c_VertPos4)
 			{
-				m_ArmState = ARM_FINISHING;
+				//m_ArmState = ARM_FINISHING;
 				m_Index++;
 			}
 			break;
@@ -212,4 +212,12 @@ ArmControl::ArmState ArmControl::HandleStates()
 	m_pHorizontalMotor->Set(HorSpeed, 0);
 	m_pVerticalMotor->Set(VertSpeed, 0);
 	return m_ArmState;
+}
+
+void ArmControl::StopRake()
+{
+	m_VertDir = VERT_IDLE;
+	m_HorDir = HOR_IDLE;
+	m_ArmState = ARM_MANUAL;
+	m_Index = 0;
 }
