@@ -150,6 +150,7 @@ private:
 		//SmartDashboard::PutNumber("Elev 2",m_pdp.GetCurrent(13));
 		SmartDashboard::PutNumber("Dither Target",m_pLiftControl->GetDitherTarget());
 		SmartDashboard::PutBoolean("Dither Enable",m_pLiftControl->GetDitherEnabled());
+		SmartDashboard::PutNumber("Current Reading From one", m_pdp.GetCurrent(1));
 	}
 
 
