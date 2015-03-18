@@ -204,6 +204,19 @@ void LiftControl::DitherElev()
 		}
 	}
 }
+
+void LiftControl::SetUpSolenoid(uint8_t moduleNumber, uint32_t channel)
+{
+	m_pSolenoid = new Solenoid(moduleNumber, channel);
+}
+void LiftControl::ToggleSolenoid(bool set)
+{
+	m_pSolenoid->Set(set);
+}
+bool LiftControl::GetSolenoid()
+{
+	return m_pSolenoid->Get();
+}
 int LiftControl::GetDitherTarget()
 {
 	return m_DitherTarget;

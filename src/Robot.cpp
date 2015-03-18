@@ -21,6 +21,7 @@ private:
 	INT32 m_LeftPos, m_RightPos;
 	DriverStation *pDS;
 	bool m_PrevButState;
+	Compressor *m_pCompressor;
 
 	void RobotInit()
 	{
@@ -35,6 +36,8 @@ private:
 		m_pDrive->SetupEncoders(0,1,2,3);
 		m_pLiftControl = new LiftControl(4, 5, 6, 7, 8);
 		m_pLiftControl->SetUpEncoder(4, 5);
+		m_pCompressor = new Compressor(0); // <------------------------------FIND THE CORRECT CAN ID
+		m_pCompressor->Start();
 		//m_pDrive->WatchdogOff();
 		m_pDrive->WatchdogOn(2.0);
 		m_firstIteration = true;
@@ -83,7 +86,15 @@ private:
 		if (true == m_pStickL->GetRawButton(6)){
 			m_pArmControl->ResetTalons(1,2);
 		}
-
+		// Toggle Solenoid
+		if (m_pStickC->GetRightBumper()){
+			if (true == m_pLiftControl->GetSolenoid())
+			{
+				m_pLiftControl->ToggleSolenoid(false);
+			} else {
+				m_pLiftControl->ToggleSolenoid(false);
+			}
+		}
 		// Recycle bin grabber (rake)
 		if (m_pStickC->GetLeftTrigger() && m_pStickC->GetRightTrigger())
 		{

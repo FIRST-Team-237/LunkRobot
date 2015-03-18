@@ -80,11 +80,14 @@ public:
 	int GetEncCount();
 	void ResetEnc();
 	void SetUpEncoder(int channelA, int channelB);
+	void SetUpSolenoid(uint8_t moduleNumber, uint32_t channel);
+	void ToggleSolenoid(bool set);
 	void EnableDither();
 	void DitherElev();
 	void DisableDither();
 	int GetDitherTarget();
 	bool GetDitherEnabled();
+	bool GetSolenoid();
 private:
 	// Motors for elevator
 	Talon *m_pElevOne;
@@ -100,6 +103,7 @@ private:
 	IntakeState m_IntakeState;
 	bool m_EnableDither;
 	int m_DitherTarget;
+	Solenoid *m_pSolenoid;
 
 };
 
