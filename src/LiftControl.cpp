@@ -48,6 +48,19 @@ void LiftControl::SetElevPosition(ElevPosition state)
 {
 	return m_CurrentState;
 }*/
+void LiftControl::MoveAuto()
+{
+	if (m_pElevEnc->GetRaw() <  800)
+	{
+		m_pElevOne->SetSpeed(-1.0);
+		m_pElevTwo->SetSpeed(-1.0);
+	}
+	else
+	{
+		m_pElevOne->SetSpeed(0);
+		m_pElevTwo->SetSpeed(0);
+	}
+}
 
 void LiftControl::MoveElevator(float speed)
 {
@@ -55,8 +68,25 @@ void LiftControl::MoveElevator(float speed)
 //		speed = 0.75;
 //	if (speed < -0.75)
 //		speed = -0.75;
-	m_pElevOne->SetSpeed(speed);
-	m_pElevTwo->SetSpeed(speed);
+	if(speed < 0){
+		if (m_pElevEnc->GetRaw() <  c_MaxStopLimit) {
+			m_pElevOne->SetSpeed(speed);
+			m_pElevTwo->SetSpeed(speed);
+		}
+		else {
+			m_pElevOne->SetSpeed(0);
+			m_pElevTwo->SetSpeed(0);
+		}
+	} else {
+		if (m_pElevEnc->GetRaw() >  c_MinStopLimit) {
+			m_pElevOne->SetSpeed(speed);
+			m_pElevTwo->SetSpeed(speed);
+		}
+		else {
+			m_pElevOne->SetSpeed(0);
+			m_pElevTwo->SetSpeed(0);
+		}
+	}
 }
 
 void LiftControl::MoveUp(bool moving)
@@ -205,9 +235,9 @@ void LiftControl::DitherElev()
 	}
 }
 
-void LiftControl::SetUpSolenoid(uint8_t moduleNumber, uint32_t channel)
+void LiftControl::SetUpSolenoid(uint32_t channel)
 {
-	m_pSolenoid = new Solenoid(moduleNumber, channel);
+	m_pSolenoid = new Solenoid(channel);
 }
 void LiftControl::ToggleSolenoid(bool set)
 {

@@ -12,12 +12,13 @@
 #include "WPILib.h"
 #include "navX/IMU.h"
 #include "ArmControl.h"
+#include "LiftControl.h"
 
 class CAutonomous
 {
 public:
 	static void RunAuto();
-	static void Setup(CTankDrive *pDrive, ArmControl *pArm);
+	static void Setup(CTankDrive *pDrive, ArmControl *pArm, LiftControl *pLift);
 	static void SetMode(int Mode);
 	static int GetMode();
 
@@ -28,6 +29,7 @@ private:
 private:
 	static CTankDrive *m_pDrive;
 	static ArmControl *m_pArm;
+	static LiftControl *m_pLift;
 	static IMU *m_pNavX;
 	static int m_AutoMode;
 };

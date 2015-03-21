@@ -9,14 +9,16 @@
 
 CTankDrive *CAutonomous::m_pDrive = NULL;
 ArmControl *CAutonomous::m_pArm = NULL;
+LiftControl *CAutonomous::m_pLift = NULL;
 IMU *CAutonomous::m_pNavX = NULL;
 int CAutonomous::m_AutoMode = 0;
 
 const double DriveSpeed = 0.98;
 const float m_adjustDegree = 0.0;
 
-void CAutonomous::Setup(CTankDrive *pDrive, ArmControl *pArm)
+void CAutonomous::Setup(CTankDrive *pDrive, ArmControl *pArm, LiftControl *pLift)
 {
+	m_pLift = pLift;
 	m_pDrive = pDrive;
 	m_pArm = pArm;
 }
@@ -44,6 +46,7 @@ void CAutonomous::RunAuto()
 	ArmControl::ArmState GrabState;
 
 	GrabState = m_pArm->HandleStates();
+	m_pLift->MoveAuto();
 
 	switch (Index)
 	{

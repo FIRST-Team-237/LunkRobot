@@ -23,8 +23,8 @@ const float c_spitOutSpeed = 0.50;
 const float c_grabSpeed = 0;
 const float c_releaseSpeed = 0;
 
-const int c_MaxStopLimit = 100000;
-const int c_MinStopLimit = -100000;
+const int c_MaxStopLimit = 1625;
+const int c_MinStopLimit = 0;
 
 const int c_deadZone = 10;
 class LiftControl {
@@ -74,13 +74,14 @@ public:
 
 	void SetLeftIntake(float speed);
 	void SetRightIntake(float speed);
+	void MoveAuto();
 
 	//ElevPosition GetElevPosition();
 	void HandleStates();
 	int GetEncCount();
 	void ResetEnc();
 	void SetUpEncoder(int channelA, int channelB);
-	void SetUpSolenoid(uint8_t moduleNumber, uint32_t channel);
+	void SetUpSolenoid(uint32_t channel);
 	void ToggleSolenoid(bool set);
 	void EnableDither();
 	void DitherElev();
