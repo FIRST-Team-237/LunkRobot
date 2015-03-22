@@ -68,7 +68,7 @@ void LiftControl::MoveElevator(float speed)
 //		speed = 0.75;
 //	if (speed < -0.75)
 //		speed = -0.75;
-	if(speed < 0){
+/*	if(speed < 0){
 		if (m_pElevEnc->GetRaw() <  c_MaxStopLimit) {
 			m_pElevOne->SetSpeed(speed);
 			m_pElevTwo->SetSpeed(speed);
@@ -87,6 +87,9 @@ void LiftControl::MoveElevator(float speed)
 			m_pElevTwo->SetSpeed(0);
 		}
 	}
+*/
+	m_pElevOne->SetSpeed(speed);
+	m_pElevTwo->SetSpeed(speed);
 }
 
 void LiftControl::MoveUp(bool moving)

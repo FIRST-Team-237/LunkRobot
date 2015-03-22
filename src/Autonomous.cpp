@@ -12,6 +12,7 @@ ArmControl *CAutonomous::m_pArm = NULL;
 LiftControl *CAutonomous::m_pLift = NULL;
 IMU *CAutonomous::m_pNavX = NULL;
 int CAutonomous::m_AutoMode = 0;
+int CAutonomous::Index = 0;
 
 const double DriveSpeed = 0.98;
 const float m_adjustDegree = 0.0;
@@ -36,7 +37,6 @@ int CAutonomous::GetMode()
 
 void CAutonomous::RunAuto()
 {
-	static int Index = 0;
 	static double LSpeed = 0.0;
 	static double RSpeed = 0.0;
 	double Error;
@@ -46,7 +46,7 @@ void CAutonomous::RunAuto()
 	ArmControl::ArmState GrabState;
 
 	GrabState = m_pArm->HandleStates();
-	m_pLift->MoveAuto();
+	//m_pLift->MoveAuto();
 
 	switch (Index)
 	{
@@ -64,7 +64,9 @@ void CAutonomous::RunAuto()
 	case 3:
 	case 5:
 		if (Index == 3)
-			Distance = 7300; //8250;
+			Distance = 7200; //8250;
+		else if (Index == 5)
+			Distance = 4600;
 		else
 			Distance = 4800; //5250;
 		// Get info from sensors

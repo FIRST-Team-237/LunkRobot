@@ -21,7 +21,7 @@ public:
 	static void Setup(CTankDrive *pDrive, ArmControl *pArm, LiftControl *pLift);
 	static void SetMode(int Mode);
 	static int GetMode();
-
+	static int Index;
 private:
 	CAutonomous();
 	~CAutonomous();

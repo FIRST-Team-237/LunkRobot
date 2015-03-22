@@ -50,10 +50,26 @@ private:
 
 	void AutonomousInit()
 	{
+		switch (CAutonomous::GetMode())
+		{
+			case 0:
+				CAutonomous::Index = 0;
+				break;
+			case 1:
+				CAutonomous::Index = 2;
+				break;
+			case 2:
+				CAutonomous::Index = 4;
+				break;
+			case 3:
+				CAutonomous::Index = 0;
+				break;
+		}
+
 		m_pDrive->ZeroNavXYaw();
 		m_pDrive->ResetEncoders();
 		m_pArmControl->ResetTalons(1,2);
-		if (CAutonomous::GetMode() == 0)
+		if (CAutonomous::GetMode() != 3)
 			m_pArmControl->GrabBin();
 	}
 
@@ -179,6 +195,27 @@ private:
 		if (CurButState && m_PrevButState == false)
 		{
 			m_PrevButState = true;
+			switch (CAutonomous::GetMode())
+			{
+			case 0:
+				CAutonomous::SetMode(1);
+				pDS->ReportError("Grab 3");
+				break;
+			case 1:
+				CAutonomous::SetMode(2);
+				pDS->ReportError("Grab 2");
+				break;
+			case 2:
+				CAutonomous::SetMode(3);
+				pDS->ReportError("Skip First Bin");
+				break;
+			case 3:
+				CAutonomous::SetMode(0);
+				pDS->ReportError("Grab all bins");
+				break;
+			}
+
+			/*
 			if (CAutonomous::GetMode() == 0)
 			{
 				CAutonomous::SetMode(1);
@@ -189,6 +226,7 @@ private:
 				CAutonomous::SetMode(0);
 				pDS->ReportError("Grab all bins");
 			}
+			*/
 		}
 		else if (CurButState == true)
 			m_PrevButState = true;
