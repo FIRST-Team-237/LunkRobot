@@ -5,6 +5,7 @@
 #include "ArmControl.h"
 #include "LiftControl.h"
 #include "XBoxController.h"
+#include <string.h>
 
 class Robot: public IterativeRobot
 {
@@ -22,9 +23,14 @@ private:
 	DriverStation *pDS;
 	bool m_PrevButState, m_PrevButState1;
 	Compressor *m_pCompressor;
+	char m_strDir[20];
+	char m_strMode[20];
+	char m_strFull[50];
 
 	void RobotInit()
 	{
+		strcpy(m_strDir, "Forward\0");
+		strcpy(m_strMode, "Grab all bins\0");
 		m_PrevButState = false;
 		m_PrevButState1 = false;
 		pDS = DriverStation::GetInstance();
@@ -194,11 +200,21 @@ private:
 		lw->Run();
 	}
 
+	void DisabledInit()
+	{
+		strcpy(m_strFull, m_strDir);
+		strcat(m_strFull, m_strMode);
+		for (int x = 0; x < 20; x++)
+			pDS->ReportError("");
+		pDS->ReportError(m_strFull);
+	}
 
 	void DisabledPeriodic()
 	{
+		int x;
 		bool CurButState = m_pStickR->GetRawButton(1);
 		bool CurButState1 = m_pStickL->GetRawButton(1);
+
 
 		//Direction selection
 		if (CurButState1 && m_PrevButState1 == false)
@@ -208,20 +224,25 @@ private:
 			{
 				case 0:
 					CAutonomous::SetDir(1);
-					pDS->ReportError("Reverse");
+					strcpy(m_strDir, "Reverse, \0");
+					//pDS->ReportError("Reverse");
 					break;
 				case 1:
 					CAutonomous::SetDir(0);
-					pDS->ReportError("Forward");
+					strcpy(m_strDir, "Forward, \0");
+					//pDS->ReportError("Forward");
 					break;
 			}
+			strcpy(m_strFull, m_strDir);
+			strcat(m_strFull, m_strMode);
+			for (x = 0; x < 20; x++)
+				pDS->ReportError("");
+			pDS->ReportError(m_strFull);
 		}
-
-
-
-
-
-
+		else if (CurButState1 == true)
+			m_PrevButState1 = true;
+		else
+			m_PrevButState1 = false;
 
 		// Autonomous selection
 		if (CurButState && m_PrevButState == false)
@@ -231,25 +252,35 @@ private:
 			{
 			case 0:
 				CAutonomous::SetMode(1);
-				pDS->ReportError("Grab 3");
+				strcpy(m_strMode, "Grab 3\0");
+				//pDS->ReportError("Grab 3");
 				break;
 			case 1:
 				CAutonomous::SetMode(2);
-				pDS->ReportError("Grab 2");
+				strcpy(m_strMode, "Grab 2\0");
+				//pDS->ReportError("Grab 2");
 				break;
 			case 2:
 				CAutonomous::SetMode(3);
-				pDS->ReportError("Skip First Bin");
+				strcpy(m_strMode, "Skip First Bin\0");
+				//pDS->ReportError("Skip First Bin");
 				break;
 			case 3:
 				CAutonomous::SetMode(4);
-				pDS->ReportError("Grab 1");
+				strcpy(m_strMode, "Grab 1\0");
+				//pDS->ReportError("Grab 1");
 				break;
 			case 4:
 				CAutonomous::SetMode(0);
-				pDS->ReportError("Grab all bins");
+				strcpy(m_strMode, "Grab all bins\0");
+				//pDS->ReportError("Grab all bins");
 				break;
 			}
+			strcpy(m_strFull, m_strDir);
+			strcat(m_strFull, m_strMode);
+			for (x = 0; x < 20; x++)
+				pDS->ReportError("");
+			pDS->ReportError(m_strFull);
 
 			/*
 			if (CAutonomous::GetMode() == 0)
