@@ -59,6 +59,7 @@ private:
 				CAutonomous::Index = 2;
 				break;
 			case 2:
+			case 4:
 				CAutonomous::Index = 4;
 				break;
 			case 3:
@@ -128,8 +129,12 @@ private:
 		else
 			m_pArmControl->m_ArmState = ArmControl::ARM_IDLE;
 
-		if (m_pStickC->GetDPadDown() || m_pStickC->GetDPadUp() || m_pStickC->GetDPadLeft() || m_pStickC->GetDPadRight())
-				m_pArmControl->StopRake();
+		if (m_pStickC->GetLeftTrigger() && !m_pStickC->GetRightTrigger())
+		//if (m_pStickC->GetDPadDown() || m_pStickC->GetDPadUp() || m_pStickC->GetDPadLeft() || m_pStickC->GetDPadRight())
+		{
+			m_pArmControl->StopRake();
+			pDS->ReportError("D Pad!");
+		}
 		m_pArmControl->HandleStates();
 
 		// Elevator control
@@ -210,6 +215,10 @@ private:
 				pDS->ReportError("Skip First Bin");
 				break;
 			case 3:
+				CAutonomous::SetMode(4);
+				pDS->ReportError("Backwards 2");
+				break;
+			case 4:
 				CAutonomous::SetMode(0);
 				pDS->ReportError("Grab all bins");
 				break;

@@ -66,28 +66,49 @@ void CAutonomous::RunAuto()
 		if (Index == 3)
 			Distance = 7200; //8250;
 		else if (Index == 5)
-			Distance = 4600;
+			Distance = 4400;
 		else
 			Distance = 4800; //5250;
 		// Get info from sensors
 		Yaw = m_pDrive->GetNavXYaw() + m_adjustDegree;
 		m_pDrive->GetPositions(&LeftPos, &RightPos);
 
-		// Have we gone the required distance?
-		if (LeftPos >= Distance || RightPos >= Distance)
+		if (m_AutoMode == 4)
 		{
-			LSpeed = RSpeed = 0.0;
-			Index++;
-			m_pArm->GrabBin();
+			Distance = -4400;
+			if (LeftPos <= Distance || RightPos <= Distance)
+			{
+				LSpeed = RSpeed = 0.0;
+				Index++;
+				m_pArm->GrabBin();
+			}
+			else
+			{
+				LSpeed = RSpeed = 0 - DriveSpeed;
+				Error = (double)Yaw / 20;
+				LSpeed -= Error/2;
+				RSpeed += Error/2;
+			}
 		}
-		// Correct for yaw because Joe designed a shitty drive system
 		else
 		{
-			LSpeed = RSpeed = DriveSpeed;
-			Error = (double)Yaw / 20;
-			LSpeed -= Error/2;
-			RSpeed += Error/2;
+			// Have we gone the required distance?
+			if (LeftPos >= Distance || RightPos >= Distance)
+			{
+				LSpeed = RSpeed = 0.0;
+				Index++;
+				m_pArm->GrabBin();
+			}
+			else
+			{
+				LSpeed = RSpeed = DriveSpeed;
+				Error = (double)Yaw / 20;
+				LSpeed -= Error/2;
+				RSpeed += Error/2;
+			}
 		}
+		// Correct for yaw because Joe designed a shitty drive system
+
 		break;
 	case 7:
 		// Turn 90 degrees
