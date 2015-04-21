@@ -18,9 +18,13 @@ class CAutonomous
 {
 public:
 	static void RunAuto();
+	static void RunAutoFwd();
+	static void RunAutoRev();
 	static void Setup(CTankDrive *pDrive, ArmControl *pArm, LiftControl *pLift);
 	static void SetMode(int Mode);
 	static int GetMode();
+	static void SetDir(int Dir);
+	static int GetDir();
 	static int Index;
 private:
 	CAutonomous();
@@ -32,6 +36,7 @@ private:
 	static LiftControl *m_pLift;
 	static IMU *m_pNavX;
 	static int m_AutoMode;
+	static int m_AutoDir;
 };
 
 

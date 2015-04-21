@@ -20,12 +20,13 @@ private:
 	PowerDistributionPanel m_pdp;
 	INT32 m_LeftPos, m_RightPos;
 	DriverStation *pDS;
-	bool m_PrevButState;
+	bool m_PrevButState, m_PrevButState1;
 	Compressor *m_pCompressor;
 
 	void RobotInit()
 	{
 		m_PrevButState = false;
+		m_PrevButState1 = false;
 		pDS = DriverStation::GetInstance();
 		lw = LiveWindow::GetInstance();
 		m_pStickL = new Joystick(0);
@@ -59,8 +60,10 @@ private:
 				CAutonomous::Index = 2;
 				break;
 			case 2:
-			case 4:
 				CAutonomous::Index = 4;
+				break;
+			case 4:
+				CAutonomous::Index = 6;
 				break;
 			case 3:
 				CAutonomous::Index = 0;
@@ -195,6 +198,30 @@ private:
 	void DisabledPeriodic()
 	{
 		bool CurButState = m_pStickR->GetRawButton(1);
+		bool CurButState1 = m_pStickL->GetRawButton(1);
+
+		//Direction selection
+		if (CurButState1 && m_PrevButState1 == false)
+		{
+			m_PrevButState = true;
+			switch (CAutonomous::GetDir())
+			{
+				case 0:
+					CAutonomous::SetDir(1);
+					pDS->ReportError("Reverse");
+					break;
+				case 1:
+					CAutonomous::SetDir(0);
+					pDS->ReportError("Forward");
+					break;
+			}
+		}
+
+
+
+
+
+
 
 		// Autonomous selection
 		if (CurButState && m_PrevButState == false)
@@ -216,7 +243,7 @@ private:
 				break;
 			case 3:
 				CAutonomous::SetMode(4);
-				pDS->ReportError("Backwards 2");
+				pDS->ReportError("Grab 1");
 				break;
 			case 4:
 				CAutonomous::SetMode(0);
